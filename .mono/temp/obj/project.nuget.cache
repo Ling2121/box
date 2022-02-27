@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "jyClR88GgROPV6o0yDungGfw4onn1akcz/1WsUh8i8IQ6jn5jJPKkKY5jyLIpbvkbmq0ATMfJ4Coysd+QJC5EA==",
+  "success": true,
+  "projectFilePath": "e:\\Development\\Projects\\Godot\\Box\\Box.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Ling_2121\\.nuget\\packages\\system.drawing.common\\6.0.0\\system.drawing.common.6.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
