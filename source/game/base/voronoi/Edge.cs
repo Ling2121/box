@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Godot;
 
 namespace Box.VoronoiMap {
     public class Edge {
@@ -9,6 +10,13 @@ namespace Box.VoronoiMap {
         public Cell Cell2;
         public Vertex P1;
         public Vertex P2;
+
+        public Vertex ShakeP1;
+        public Vertex ShakeP2;
+
+        public List<Vertex> ShakeVertex;
+
+        public bool IsShake = false;
 
         public Edge(long index) {
             Index = index;

@@ -14,8 +14,12 @@ namespace Box.WorldBuils.Default {
             int width = table.GetValue<int>("地图宽度");
             int height = table.GetValue<int>("地图高度");
             RandomNumberGenerator random = table.GetValue<RandomNumberGenerator>("随机数生成器");
-            int point_number = setting.GetValue<int>("顶点数");
             IDataCanvas<ushort> canvas = table.GetValue<IDataCanvas<ushort>>("缓存画布");
+            
+            int point_number = setting.GetValue<int>("顶点数");
+            
+
+            GD.Print("顶点数:",point_number);
 
             List<Vector2> points = new List<Vector2>();
 
@@ -25,12 +29,19 @@ namespace Box.WorldBuils.Default {
 
             Voronoi voronoi = new Voronoi(points,width,height);
 
+            table.SetValue<Voronoi>("Voronoi图",voronoi);
+
+            #warning 在DEBUG模式下VoronoiMapBuildProcess会对 “缓存画布” 进行绘制
+            #if BOX_DEBUG
             canvas.DrawBegin();
                 canvas.DrawRectangle(0,0,width,height,true,0);
-                foreach(Cell cell in voronoi.Cells.Values) {
-                    canvas.DrawPolygon(DataCanvasUtil.ToPointArray(cell.VerticesToVector2Array()),1,true);
+                
+                foreach(Cell cell in voronoi.Cells.Values) {    
+                    ushort d = (ushort)random.RandiRange(0,0xffff);
+                    canvas.DrawPolygon(DataCanvasUtil.ToPointArray(cell.VerticesToVector2Array()),d,true);
                 }
             canvas.DrawEnd();
+            #endif
             
             return table;
         }

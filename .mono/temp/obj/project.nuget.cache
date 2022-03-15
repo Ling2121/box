@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jyClR88GgROPV6o0yDungGfw4onn1akcz/1WsUh8i8IQ6jn5jJPKkKY5jyLIpbvkbmq0ATMfJ4Coysd+QJC5EA==",
+  "dgSpecHash": "W2XC1LM8/pJFIzJgeZYhwUo0Q6eEvWGpZLgZT0TmYf4hRGyoqT+N/wT5pXCDruOC0e0kRjovhbENd9qrkXYdww==",
   "success": true,
-  "projectFilePath": "e:\\Development\\Projects\\Godot\\Box\\Box.csproj",
+  "projectFilePath": "E:\\Development\\Projects\\Godot\\Box\\Box.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Ling_2121\\.nuget\\packages\\system.drawing.common\\6.0.0\\system.drawing.common.6.0.0.nupkg.sha512"
   ],

@@ -1,5 +1,3 @@
-using System.Diagnostics.Tracing;
-using System.Drawing;
 using System;
 using System.Collections.Generic;
 using Godot;
@@ -55,11 +53,55 @@ namespace Box.VoronoiMap {
                     cell.Vertices.Add(GetVertexOrNew(p));
                 }
 
+                for(int i = 0;i<cell.Vertices.Count;i++) {
+                    Vertex p1 = cell.Vertices[i];
+                    Vertex p2 = p1;
+                    if(i == cell.Vertices.Count - 1) {
+                        p2 = cell.Vertices[0];
+                    } else {
+                        p2 = cell.Vertices[i + 1];
+                    }
+
+                    p1.Next = p2;
+                    p2.Up = p1;
+                }
+
                 foreach(Edge edge in cell.Edges) {
                     cell.Neighbor.Add(edge.Cell1 == cell ? edge.Cell2:edge.Cell1);
                 }
             }
 
+            foreach(Cell cell in Cells.Values) {
+                List<Vertex> vertices = cell.Vertices;
+                for(int i = 0;i < vertices.Count;i++) {
+                    Vertex p1 = vertices[i];
+                    Vertex p2 = p1;
+                    if(i == vertices.Count - 1) {
+                        p2 = vertices[0];
+                    } else {
+                        p2 = vertices[i + 1];
+                    }
+                    Edge edge = FindEdgeFromVertex(p1,p2,cell.Edges);
+                    if(edge != null) {
+                        if(GetPointHash(edge.P1) != GetPointHash(p1)) {
+                            Vertex old_p1 = edge.P1;
+                            Vertex old_p2 = edge.P2;
+                            edge.P1 = old_p2;
+                            edge.P2 = old_p1;
+                        }
+                    }
+                }
+            }
+        }
+
+        public Edge FindEdgeFromVertex(Vertex p1,Vertex p2,List<Edge> edges) {
+            foreach(Edge edge in edges) {
+                long hash_code = GetPointHash((p1.Vector + p2.Vector) / 2);
+                if(hash_code == edge.Index) {
+                    return edge;
+                }
+            }
+            return null;
         }
 
         public void SortCellsEdge() {
@@ -123,6 +165,16 @@ namespace Box.VoronoiMap {
             return vertex;
         }
 
+        protected Vertex GetVertexOrNew(Vector2 vec) {
+            long hash_code = GetPointHash(vec.x,vec.y);
+            if(Vertexs.ContainsKey(hash_code)) {
+                return Vertexs[hash_code];
+            }
+            Vertex vertex = new Vertex(vec.x,vec.y);
+            Vertexs[hash_code] = vertex;
+            return vertex;
+        }
+
         protected Cell GetCellOrNew(csDelaunay.Site site) {
             Cell cell = null;
             long hash_code = GetPointHash(site.Coord);
@@ -174,6 +226,26 @@ namespace Box.VoronoiMap {
                 }
             }
             return edge;
+        }
+
+        public const int MAX_SHAKE_NUMBER = 16;
+
+        public static void ShakeEdge(Vertex p1,Vertex p2,Vector2 p3,Vector2 p4,int sk_num,float sk_min,float sk_max,RandomNumberGenerator random) {
+            Vertex node = p1;
+            Vector2 dir = (p3 - p4).Normalized();
+            float dis = (p1.Vector.DistanceTo(p2.Vector));
+            Vector2 seg_len =  (p2.Vector - p1.Vector) / sk_num;
+            Vector2 org = p1.Vector + seg_len;
+            float std_ofs =  dis / 2;
+            sk_num -= 2;//去掉两边
+            for(int i = 0;i < sk_num;i++) {
+                float n = random.RandfRange(sk_min,sk_max);
+                Vertex next_p = new Vertex(org + (dir * (std_ofs * n)));
+                p1.Next = next_p;
+                p1 = next_p;
+                org += seg_len;
+            }
+            p1.Next = p2;
         }
 
     }

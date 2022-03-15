@@ -1,0 +1,11 @@
+E:\Development\Projects\Godot\Box\.mono\temp\bin\Debug\Box.dll
+E:\Development\Projects\Godot\Box\.mono\temp\bin\Debug\Box.pdb
+E:\Development\Projects\Godot\Box\.mono\temp\bin\Debug\System.Drawing.Common.dll
+E:\Development\Projects\Godot\Box\.mono\temp\obj\Debug\Box.csproj.AssemblyReference.cache
+E:\Development\Projects\Godot\Box\.mono\temp\obj\Debug\Box.GeneratedMSBuildEditorConfig.editorconfig
+E:\Development\Projects\Godot\Box\.mono\temp\obj\Debug\Box.AssemblyInfoInputs.cache
+E:\Development\Projects\Godot\Box\.mono\temp\obj\Debug\Box.AssemblyInfo.cs
+E:\Development\Projects\Godot\Box\.mono\temp\obj\Debug\Box.csproj.CoreCompileInputs.cache
+E:\Development\Projects\Godot\Box\.mono\temp\obj\Debug\Box.csproj.CopyComplete
+E:\Development\Projects\Godot\Box\.mono\temp\obj\Debug\Box.dll
+E:\Development\Projects\Godot\Box\.mono\temp\obj\Debug\Box.pdb

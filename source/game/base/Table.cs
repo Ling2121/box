@@ -9,12 +9,20 @@ namespace Box {
         }
 
         public T GetValue<T>(string key,T else_value) {
-            if(!ContainsKey(key)) return else_value;
+            if(!ContainsKey(key)) {
+                this[key] = else_value;
+                return else_value;
+            };
+
             return (T)this[key];
         }
 
         public T GetValue<T>(string key,Func<T> else_value_f) {
-            if(!ContainsKey(key)) return else_value_f();
+            if(!ContainsKey(key)) {
+                T value = else_value_f();
+                this[key] = value;
+                return value;
+            }
             return (T)this[key];
         }
 
@@ -89,6 +97,7 @@ namespace Box {
             return this;
         }
 
+        //为空时才赋值
         public Table SetValueFromSelf<T>(string key,Func<object> else_value_f) {
             if(!ContainsKey(key)) {
                 SetValue<T>(key,else_value_f());

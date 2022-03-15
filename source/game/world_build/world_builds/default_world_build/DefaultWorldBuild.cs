@@ -12,7 +12,10 @@ namespace Box.WorldBuils.Default {
         4.对各个生态群落进行生成
     */
     public class DefaultWorldBuild : WorldBuild {
-        public Table table;
+
+        public Table Table {get {return table;}}
+
+        public Table table = new Table();
         public DefaultWorldBuild(Table setting) {
             //配置
             table
@@ -38,11 +41,29 @@ namespace Box.WorldBuils.Default {
                     return new DataCanvas16Bit(width,height);
                 })
                 ;
+
             
-            setting.GetValue<Table>("Voronoi图生成设置",new Table())
-                .SetValueFromSelf<int>("顶点数",()=>{
-                    return ((width + height) / 2) * 0.05;
-                });
+            
+            table.SetValueFrom<Table>(setting,"Voronoi图生成设置",new Table())
+            .GetValue<Table>("Voronoi图生成设置")
+                .SetValueFromSelf<int>("顶点数",(int)(((width + height) / 2) * 0.08))
+                ;
+
+            table.SetValueFrom<Table>(setting,"地形图生成设置",new Table())
+            .GetValue<Table>("地形图生成设置")
+                .SetValueFromSelf<float>("最小边缘扭曲比例",0.6f)
+                .SetValueFromSelf<float>("最大边缘扭曲比例",0.7f)
+                .SetValueFromSelf<int>("边缘扭曲递归数",4)
+                .SetValueFromSelf<NoiseGenerator>("噪声生成器",()=>{
+                    ulong seed = table.GetValue<ulong>("随机种子");
+                    NoiseGenerator noise = new NoiseGenerator((int)seed);
+                    noise.Period = 75f;
+                    noise.Octaves = 3;
+                    noise.Persistence = 0.5f;
+                    noise.Lacunarity = 2f;
+                    return noise;   
+                })
+                ;
 
 
             //添加生成过程
@@ -63,5 +84,25 @@ namespace Box.WorldBuils.Default {
         public Table Build() {
             return Build(table);
         }
+
+        #if BOX_DEBUG
+        
+        public Table DebugBuild(int step = -1) {
+            if(step == -1) {//处理全部过程
+                foreach(IWorldBuildProcess process in build_process) {
+                    process.Build(table);
+                }
+            } else {
+                int s = 0;
+                foreach(IWorldBuildProcess process in build_process) {
+                    if(s >= step) break;
+                    process.Build(table);
+                    s++;
+                }
+            }
+            return table;
+        }
+        
+        #endif
     }
 }

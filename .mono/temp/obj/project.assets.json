@@ -66,11 +66,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "e:\\Development\\Projects\\Godot\\Box\\Box.csproj",
+      "projectUniqueName": "E:\\Development\\Projects\\Godot\\Box\\Box.csproj",
       "projectName": "Box",
-      "projectPath": "e:\\Development\\Projects\\Godot\\Box\\Box.csproj",
+      "projectPath": "E:\\Development\\Projects\\Godot\\Box\\Box.csproj",
       "packagesPath": "C:\\Users\\Ling_2121\\.nuget\\packages\\",
-      "outputPath": "e:\\Development\\Projects\\Godot\\Box\\.mono\\temp\\obj\\",
+      "outputPath": "E:\\Development\\Projects\\Godot\\Box\\.mono\\temp\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

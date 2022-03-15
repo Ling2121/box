@@ -29,7 +29,7 @@ namespace Box {
             foreach(IWorldBuildProcess process in build_process) {
                 table = process.Build(table);   
             }
-            return table;
+            return table; 
         }
     }
 }
