@@ -11,6 +11,19 @@ namespace Box.WorldBuils.Default {
         3.生成生态群落图
         4.对各个生态群落进行生成
     */
+
+    public enum TopographicType {
+        Land,
+        Water,
+    }
+
+    public class BuildCellInfo {
+        public TopographicType Type;
+        //是否是当前TopographicType类型的边缘 
+        bool IsEdge;
+        uint BiomeID;
+    }
+
     public class DefaultWorldBuild : WorldBuild {
 
         public Table Table {get {return table;}}
@@ -46,7 +59,7 @@ namespace Box.WorldBuils.Default {
             
             table.SetValueFrom<Table>(setting,"Voronoi图生成设置",new Table())
             .GetValue<Table>("Voronoi图生成设置")
-                .SetValueFromSelf<int>("顶点数",(int)(((width + height) / 2) * 0.08))
+                .SetValueFromSelf<int>("顶点数",(int)(((width + height) / 2) * 0.05))
                 ;
 
             table.SetValueFrom<Table>(setting,"地形图生成设置",new Table())

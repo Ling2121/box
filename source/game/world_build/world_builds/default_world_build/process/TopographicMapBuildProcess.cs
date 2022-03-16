@@ -5,16 +5,6 @@ using Box.DataCanvas;
 using Box.DataCanvas.SystemDrawing;
 
 namespace Box.WorldBuils.Default {
-    public enum TopographicType {
-        Land,
-        Water,
-    }
-
-    public struct CellTopographicInfo {
-        public TopographicType Type;
-        //是否是当前TopographicType类型的边缘 
-        bool IsTypeEdge;
-    }
 
     public class TopographicMapBuildProcess : IWorldBuildProcess {
         public Table Build(Table table) {
@@ -30,12 +20,12 @@ namespace Box.WorldBuils.Default {
             float shake_min = setting.GetValue<float>("最小边缘扭曲比例");
             float shake_max = setting.GetValue<float>("最大边缘扭曲比例");
 
-            Dictionary<long,CellTopographicInfo> cell_infos = new Dictionary<long, CellTopographicInfo>();
+            Dictionary<long,BuildCellInfo> cell_infos = new Dictionary<long, BuildCellInfo>();
             List<Cell> land_cells = new List<Cell>();
 
             foreach(Cell cell in voronoi.Cells.Values) {
                 int n = (int)(noise.IslandNoise(cell.Position,width,height) * 255);
-                CellTopographicInfo info = new CellTopographicInfo();
+                BuildCellInfo info = new BuildCellInfo();
                 if(n > 2) {
                     info.Type = TopographicType.Land;
                     land_cells.Add(cell);
@@ -45,11 +35,13 @@ namespace Box.WorldBuils.Default {
                 cell_infos[cell.Index] = info;
             }
 
+            table.SetValue<Dictionary<long,BuildCellInfo>>("Voronoi细胞信息",cell_infos);
+
             
             #if BOX_DEBUG
                 IDataCanvas<ushort> canvas1 = new DataCanvas16Bit(width,height);
                 foreach(Cell cell in voronoi.Cells.Values) {
-                    CellTopographicInfo info = cell_infos[cell.Index];
+                    BuildCellInfo info = cell_infos[cell.Index];
                     ushort d = (ushort)(info.Type == TopographicType.Land ? 1:0);
                     canvas1.DrawPolygon(DataCanvasUtil.ToPointArray(cell.VerticesToVector2Array()),d,true);
                 }
@@ -59,8 +51,8 @@ namespace Box.WorldBuils.Default {
             foreach(Cell land_cell in land_cells) {
                 Vector2 p4 = land_cell.Position;
                 foreach(Edge edge in land_cell.Edges) {
-                    CellTopographicInfo cell1_info = cell_infos[edge.Cell1.Index];
-                    CellTopographicInfo cell2_info = cell_infos[edge.Cell2.Index];
+                    BuildCellInfo cell1_info = cell_infos[edge.Cell1.Index];
+                    BuildCellInfo cell2_info = cell_infos[edge.Cell2.Index];
                     if(cell1_info.Type == TopographicType.Water || cell2_info.Type == TopographicType.Water) {
                         if(!edge.IsShake) {
                             edge.IsShake = true;
@@ -79,9 +71,8 @@ namespace Box.WorldBuils.Default {
                     所以Cell的边和点都是只有一套的!
                 */
                 IDataCanvas<ushort> canvas2 = new DataCanvas16Bit(width,height);
-                ushort c = 1;
                 foreach(Cell cell in voronoi.Cells.Values) {
-                    CellTopographicInfo info = cell_infos[cell.Index];
+                    BuildCellInfo info = cell_infos[cell.Index];
                     if(info.Type == TopographicType.Land) {
                         canvas2.DrawPolygon(DataCanvasUtil.ToPointArray(cell.VerticesToVector2Array()),1,true);
                         foreach(Edge edge in cell.Edges) {
