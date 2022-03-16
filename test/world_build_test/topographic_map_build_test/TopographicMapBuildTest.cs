@@ -26,7 +26,7 @@ namespace Box.Test {
                     NoiseGenerator noise = new NoiseGenerator((int)seed);
                     noise.Period = 75f;
                     noise.Octaves = 3;
-                    noise.Persistence = 0.5f;
+                    noise.Persistence = 0.6f;
                     noise.Lacunarity = 2f;
                     return noise;   
                 })

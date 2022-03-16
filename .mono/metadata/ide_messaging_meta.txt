@@ -1,2 +1,0 @@
-﻿50038
-E:/Development/Environment/Godot/3.4.2/Godot_v3.4.2-stable_mono_win64.exe
