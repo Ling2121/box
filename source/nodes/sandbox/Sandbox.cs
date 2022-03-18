@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 
 namespace Box {
     public struct CreatePack {
-        RegisterType Type;
+        Register.RegisterType RegisterType;
         String Name;
         Hashtable Datas;
     }

@@ -36,6 +36,7 @@ namespace Box.WorldBuils.Default {
             }
 
             table.SetValue<Dictionary<long,BuildCellInfo>>("Voronoi细胞信息",cell_infos);
+            table.SetValue<List<Cell>>("陆地Voronoi细胞",land_cells);
 
             
             #if BOX_DEBUG
@@ -67,9 +68,6 @@ namespace Box.WorldBuils.Default {
             }
 
             #if BOX_DEBUG
-                /*
-                    所以Cell的边和点都是只有一套的!
-                */
                 IDataCanvas<ushort> canvas2 = new DataCanvas16Bit(width,height);
                 foreach(Cell cell in voronoi.Cells.Values) {
                     BuildCellInfo info = cell_infos[cell.Index];

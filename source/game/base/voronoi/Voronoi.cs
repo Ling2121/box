@@ -238,6 +238,7 @@ namespace Box.VoronoiMap {
             Vector2 org = p1.Vector + seg_len;
             float std_ofs =  dis / 2;
             sk_num -= 2;//去掉两边
+            
             for(int i = 0;i < sk_num;i++) {
                 float n = random.RandfRange(sk_min,sk_max);
                 Vertex next_p = new Vertex(org + (dir * (std_ofs * n)));

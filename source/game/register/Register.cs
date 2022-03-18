@@ -19,6 +19,8 @@ namespace Box {
         protected Dictionary<string,Type> entities;
         protected Dictionary<string,IBiome> biomes;
 
+        public List<string> BiomeNameList = new List<string>();
+
         protected Type EntityType = typeof(IEntity);
         protected Type BlockType = typeof(IBlock);
         protected Type ItemType = typeof(IItem);
@@ -70,6 +72,7 @@ namespace Box {
                         }break;
                         case RegisterType.Biome : {
                             IBiome biome = (IBiome)Activator.CreateInstance(type);
+                            BiomeNameList.Add(reg_name);
                             biomes[reg_name] = biome;
                         }break;
                     }

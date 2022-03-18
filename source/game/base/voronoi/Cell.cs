@@ -23,5 +23,39 @@ namespace Box.VoronoiMap {
             return arr;
         }
 
+        public int[] VerticesToIntArray() {
+            int[] arr = new int[Vertices.Count * 2];
+            
+            int i = 0;
+            foreach(Vertex vertex in Vertices) {
+                arr[i] = vertex.CeilX;
+                arr[i + 1] = vertex.CeilY;
+                i += 2;
+            }
+
+            return arr;
+        }
+
+        public List<Vector2[]> ShakeEdgesToVector2Array() {
+            List<Vector2[]> edges = new List<Vector2[]>();
+            foreach(Edge edge in Edges) {
+                if(edge.IsShake) {
+                    edges.Add(edge.GetShakeVertexesVectorArray());
+                }
+            }
+            return edges;
+        }
+
+        
+        public List<int[]> ShakeEdgesToIntArray() {
+            List<int[]> edges = new List<int[]>();
+            foreach(Edge edge in Edges) {
+                if(edge.IsShake) {
+                    edges.Add(edge.GetShakeVertexesIntArray());
+                }
+            }
+            return edges;
+        }
+
     }
 }

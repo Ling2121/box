@@ -20,8 +20,8 @@ namespace Box.WorldBuils.Default {
     public class BuildCellInfo {
         public TopographicType Type;
         //是否是当前TopographicType类型的边缘 
-        bool IsEdge;
-        uint BiomeID;
+        public bool IsEdge;
+        public string Biome;
     }
 
     public class DefaultWorldBuild : WorldBuild {
