@@ -1,55 +1,193 @@
+using System.Linq;
+using System;
 using System.Threading.Tasks;
 using System.Collections;
 using Godot;
-using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
 namespace Box {
-    public struct CreatePack {
-        Register.RegisterType RegisterType;
-        String Name;
-        Hashtable Datas;
-    }
-
+    [ClassName("Fuck")]
     public class Sandbox : YSort {
-        protected static ConcurrentQueue<CreatePack> create_queue = new ConcurrentQueue<CreatePack>();
-        public static ConcurrentQueue<CreatePack> CreateQueue {get {return create_queue;}}
+        public const int REGION_CELL_PIXEL_SIZE = 16;
+        public const int REGION_SIZE = 16;
+        public const int REGION_PIXEL_SIZE = REGION_CELL_PIXEL_SIZE * REGION_SIZE;
 
+        public static (int,int) WorldToRegion(float x,float y) {
+            return (Mathf.FloorToInt(x / REGION_PIXEL_SIZE),Mathf.FloorToInt(y / REGION_PIXEL_SIZE));
+        }
+
+        public static (int,int) WorldToRegion(Vector2 p) {
+            return (Mathf.FloorToInt(p.x / REGION_PIXEL_SIZE),Mathf.FloorToInt(p.y / REGION_PIXEL_SIZE));
+        }
+
+        public static Vector2 RegionToWorld(float x,float y) {
+            return new Vector2(x * REGION_PIXEL_SIZE,y * REGION_PIXEL_SIZE);
+        }
+
+        public static Vector2 RegionToWorld(Vector2 p) {
+            return new Vector2(p.x * REGION_PIXEL_SIZE,p.y * REGION_PIXEL_SIZE);
+        }
+
+        protected bool region_thread_run = true;
+        //区块加载线程
+        protected Task region_load_thread;
+        //区块卸载线程
+        protected Task region_unload_thread;
+        //区块加载队列
+        public ConcurrentQueue<(int x,int y)> RegionLoadInstructQueue {get;protected set;} = new ConcurrentQueue<(int x,int y)>();
+        //区块卸载队列
+        public ConcurrentQueue<(int x,int y)> RegionUnloadInstructQueue {get;protected set;} = new ConcurrentQueue<(int x,int y)>();
         //已加载的区块
-        protected Dictionary<int,Dictionary<int,SandboxRegion>> regions = new Dictionary<int, Dictionary<int, SandboxRegion>>();
-        //在场景中的区块
-        protected Node2D loading_regions = new Node2D();
-
+        public Dictionary<int,Dictionary<int,SandboxRegion>> Regions {get;protected set;} = new Dictionary<int, Dictionary<int, SandboxRegion>>();
+        
         //世界生成器
         protected WorldBuild world_build;
+        public TileMap TileMap;
 
-        [Export]
-        //加载中心
-        public Vector2 LoadCenter = new Vector2(0,0);
-        [Export]
-        //加载半径
-        public int LoadRadius = 4;
-        [Export]
-        //卸载半径
-        public int UnloadRadius = 12;
-
-        public void LoadRegion() {
-            //创建区块[生成/读取]线程
-            Task.Run(()=>{
-
-            });
+        public override void _EnterTree()
+        {
+            Game.Instance.CurrentSandbox = this;
         }
 
-        public void UnloadRegion() {
-            //创建区块卸载线程
-            Task.Run(()=>{
+        public override void _Ready()
+        {
+            base._Ready();
 
-            });
+            TileMap = GetNodeOrNull<TileMap>("TileMap");
+            if(TileMap == null) {
+                
+                
+                TileMap = new TileMap();
+                TileMap.ZIndex = -100;
+                TileMap.CellSize = new Vector2(REGION_CELL_PIXEL_SIZE,REGION_CELL_PIXEL_SIZE);
+                //TileMap.CellYSort = true;
+                TileMap.TileSet = GD.Load<TileSet>("res://resource/image/tilesets/default/default.tres");
+                AddChild(TileMap);
+            }
+
+            region_load_thread = Task.Run(_RegionLoadThread);
+            region_unload_thread = Task.Run(_RegionUnLoadThread);
         }
 
-        public void StopRegion() {
-            
+        public override void _ExitTree()
+        {
+            region_thread_run = false;
+            region_load_thread.Wait();
+            region_unload_thread.Wait();
+        }
+
+        public void _RegionLoadThread() {
+            GD.Print("区块加载线程启动");
+            try {
+                while(region_thread_run) {
+                    (int rx,int ry) r = (0,0);
+                    if(RegionLoadInstructQueue.TryDequeue(out r)) {
+                        SandboxRegionStatus status = GetRegionStatus(r.rx,r.ry);
+                        if(status != SandboxRegionStatus.Loading) {
+                            //进行加载
+                            SandboxRegion region = GetRegion(r.rx,r.ry);
+                            LoadRegion(region);
+                            region.IndexCount ++;
+                        } else {
+                            if (status == SandboxRegionStatus.Loading) {
+                                Regions[r.ry][r.rx].IndexCount ++;
+                            }
+                        }
+                    }
+                }
+            }
+            catch(Exception e) {
+                GD.Print("Thread Error  ",e.Message);
+            }
+            GD.Print("区块加载线程关闭");
+        }
+
+        public void _RegionUnLoadThread() {
+            GD.Print("区块卸载线程启动");
+            while(region_thread_run) {
+                (int rx,int ry) r = (0,0);
+                if(RegionUnloadInstructQueue.TryDequeue(out r)) {
+                    SandboxRegion region = GetRegion(r.rx,r.ry);
+                    SandboxRegionStatus status = region.Status;
+                    if(status == SandboxRegionStatus.Loading) {
+                        region.IndexCount --;
+                        if(region.IndexCount == 0) {
+                            //进行卸载(卸载时会进行保存)
+                            UnloadRegion(region);
+                            
+                        } else {
+                            //进行保存
+                            SaveRegion(region);
+                        }
+                    }
+                }
+            }
+            GD.Print("区块卸载线程关闭");
+        }
+
+
+        public SandboxRegion GetRegion(int rx,int ry) {
+            if(!Regions.ContainsKey(ry)) {
+                Regions[ry] = new Dictionary<int, SandboxRegion>();
+            }
+            if(!Regions[ry].ContainsKey(rx)) {
+                Regions[ry][rx] = new SandboxRegion(rx,ry);
+            }
+            return Regions[ry][rx];
+        }
+
+        public SandboxRegionStatus GetRegionStatus(int rx,int ry) {
+            if(!Regions.ContainsKey(ry)){ return SandboxRegionStatus.NotLoad; }
+            if(!Regions[ry].ContainsKey(rx)){ return SandboxRegionStatus.NotLoad; }
+            return Regions[ry][rx].Status;
+        }
+
+
+        public SandboxRegion RemoveRegion(int rx,int ry) {
+            if(!Regions.ContainsKey(ry)) {
+                Regions[ry] = new Dictionary<int, SandboxRegion>();
+            }
+            if(Regions[ry].ContainsKey(rx)) {
+                SandboxRegion region = Regions[ry][rx];
+                Regions[ry].Remove(rx);
+                return region;
+
+            }
+            return null;
+        }
+
+        public void RemoveRegion(SandboxRegion region) {
+            RemoveRegion(region.X,region.Y);
+        }
+
+        protected void LoadRegion(SandboxRegion region) {
+            region._Load(this);
+
+            #if BOX_DEBUG
+                Update();
+            #endif
+        }
+
+        protected void UnloadRegion(SandboxRegion region) {
+            region._Unload(this);
+            RemoveRegion(region);
+
+            #if BOX_DEBUG
+                Update();
+            #endif
+        }
+
+        protected void SaveRegion(SandboxRegion region) {
+            region._Save(this);
+        }
+        public override void _Draw()
+        {
+            foreach(var a in Regions.Values.ToArray()) {
+                foreach(var region in a.Values.ToArray<SandboxRegion>()) { 
+                    DrawRect(new Rect2(region.X * Sandbox.REGION_PIXEL_SIZE,region.Y * Sandbox.REGION_PIXEL_SIZE,Sandbox.REGION_PIXEL_SIZE,Sandbox.REGION_PIXEL_SIZE),Colors.Red,false);
+                }
+            }
         }
     }
 }

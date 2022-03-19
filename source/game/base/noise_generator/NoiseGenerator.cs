@@ -3,6 +3,7 @@ using Godot;
 
 namespace Box {
     public class NoiseGenerator : OpenSimplexNoise {
+        public NoiseGenerator() {}
 
         public NoiseGenerator(int seed = 233) {
             Seed = seed;
