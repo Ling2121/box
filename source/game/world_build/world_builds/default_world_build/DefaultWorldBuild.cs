@@ -83,7 +83,7 @@ namespace Box.WorldBuils.Default {
             AddProcess("生成Voronoi图",new VoronoiMapBuildProcess());
             AddProcess("生成地形图",new TopographicMapBuildProcess());
             AddProcess("生成生态群落图",new BiomeMapBuildProcess());
-            AddProcess("对生态群落进行特定生成",new BiomeMapBuildProcess());
+            AddProcess("对生态群落进行特定生成",new BiomeBuildProcess());
 
             //配置生成过程
             SettingProcess(new string[]{

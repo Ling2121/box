@@ -14,10 +14,10 @@ namespace Box {
             Undefined,
         }
 
-        protected Dictionary<string,Type> items;
-        protected Dictionary<string,Type> blocks;
-        protected Dictionary<string,Type> entities;
-        protected Dictionary<string,IBiome> biomes;
+        protected Dictionary<string,Type> items = new Dictionary<string, Type>();
+        protected Dictionary<string,Type> blocks = new Dictionary<string, Type>();
+        protected Dictionary<string,Type> entities = new Dictionary<string, Type>();
+        protected Dictionary<string,IBiome> biomes = new Dictionary<string, IBiome>();
 
         public List<string> BiomeNameList = new List<string>();
 

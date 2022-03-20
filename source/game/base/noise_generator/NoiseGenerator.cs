@@ -23,7 +23,7 @@ namespace Box {
         public float IslandNoise(Vector2 p,int width,int height) {
             float cx = width/ 2,cy = height / 2;
             float dx = (p.x - cx) / width,dy = (p.y - cy) /height;
-            float d = (float)(Mathf.Sqrt(dx * dx + dy * dy) / 0.6);
+            float d = (float)(Mathf.Sqrt(dx * dx + dy * dy) / 0.75);
             float n = (1 + GetNoise2dv(p)) / 2;
             return n - d;
         }

@@ -24,6 +24,13 @@ namespace Box.DataCanvas {
             
         }
 
+        public static void FillCell(IDataCanvas<ushort> canvas,Box.VoronoiMap.Cell cell,ushort index) {
+            canvas.DrawPolygon(cell.VerticesToIntArray(),index,true);
+            foreach(int[] shake_edge in cell.ShakeEdgesToIntArray()) {
+                canvas.DrawPolygon(shake_edge,index,true);
+            }
+        }
+
         public static ImageTexture ToImageTexture<DataType>(IDataCanvas<DataType> canvas)  where DataType : struct  {
             ImageTexture texture = new ImageTexture();
             Image data = new Image();

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 
@@ -24,14 +25,12 @@ namespace Box.VoronoiMap {
             List<Vector2> arr = new List<Vector2>();
             Vertex node = ShakeP1;
             
-            while(node != null) {
+            while(node != ShakeP2) {
                 arr.Add(new Vector2(node.X,node.Y));
                 node = node.Next;
-                if(node == ShakeP2) {
-                    arr.Add(new Vector2(node.X,node.Y));
-                    break;
-                }
             }
+
+            arr.Add(new Vector2(ShakeP2.X,ShakeP2.Y));
 
             return arr.ToArray();
         }

@@ -47,6 +47,7 @@ namespace Box {
 
         public override void _EnterTree()
         {
+            Register.Instance.Init();
             Game.Instance.CurrentSandbox = this;
         }
 
@@ -79,26 +80,21 @@ namespace Box {
 
         public void _RegionLoadThread() {
             GD.Print("区块加载线程启动");
-            try {
-                while(region_thread_run) {
-                    (int rx,int ry) r = (0,0);
-                    if(RegionLoadInstructQueue.TryDequeue(out r)) {
-                        SandboxRegionStatus status = GetRegionStatus(r.rx,r.ry);
-                        if(status != SandboxRegionStatus.Loading) {
-                            //进行加载
-                            SandboxRegion region = GetRegion(r.rx,r.ry);
-                            LoadRegion(region);
-                            region.IndexCount ++;
-                        } else {
-                            if (status == SandboxRegionStatus.Loading) {
-                                Regions[r.ry][r.rx].IndexCount ++;
-                            }
+            while(region_thread_run) {
+                (int rx,int ry) r = (0,0);
+                if(RegionLoadInstructQueue.TryDequeue(out r)) {
+                    SandboxRegionStatus status = GetRegionStatus(r.rx,r.ry);
+                    if(status != SandboxRegionStatus.Loading) {
+                        //进行加载
+                        SandboxRegion region = GetRegion(r.rx,r.ry);
+                        LoadRegion(region);
+                        region.IndexCount ++;
+                    } else {
+                        if (status == SandboxRegionStatus.Loading) {
+                            Regions[r.ry][r.rx].IndexCount ++;
                         }
                     }
                 }
-            }
-            catch(Exception e) {
-                GD.Print("Thread Error  ",e.Message);
             }
             GD.Print("区块加载线程关闭");
         }
@@ -184,7 +180,8 @@ namespace Box {
         public override void _Draw()
         {
             foreach(var a in Regions.Values.ToArray()) {
-                foreach(var region in a.Values.ToArray<SandboxRegion>()) { 
+                var b = a.Values.ToArray<SandboxRegion>();
+                foreach(var region in b) { 
                     DrawRect(new Rect2(region.X * Sandbox.REGION_PIXEL_SIZE,region.Y * Sandbox.REGION_PIXEL_SIZE,Sandbox.REGION_PIXEL_SIZE,Sandbox.REGION_PIXEL_SIZE),Colors.Red,false);
                 }
             }

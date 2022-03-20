@@ -28,8 +28,8 @@ namespace Box.VoronoiMap {
             
             int i = 0;
             foreach(Vertex vertex in Vertices) {
-                arr[i] = vertex.CeilX;
-                arr[i + 1] = vertex.CeilY;
+                arr[i] = (int)vertex.X;
+                arr[i + 1] = (int)vertex.Y;
                 i += 2;
             }
 

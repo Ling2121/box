@@ -35,6 +35,8 @@ namespace Box {
 
         public void _Load(Sandbox sandbox) {
             Status = SandboxRegionStatus.Loading;
+            
+
             #if BOX_DEBUG
                 //GD.Print($"加载区块({X}:{Y})");
                 int grass_index = sandbox.TileMap.TileSet.FindTileByName("grass");
@@ -49,8 +51,11 @@ namespace Box {
         public void _Unload(Sandbox sandbox) {
             _Save(sandbox);
             Status = SandboxRegionStatus.Unload;
+
+
+
             #if BOX_DEBUG
-                GD.Print($"卸载区块({X}:{Y})");
+                //GD.Print($"卸载区块({X}:{Y})");
                 for(int y = TileOriginY;y < TileMaxY;y++) {
                     for(int x = TileOriginX;x < TileMaxX;x++) {
                         sandbox.TileMap.CallDeferred("set_cell",x,y,-1);
@@ -60,7 +65,7 @@ namespace Box {
         }
 
         public void _Save(Sandbox sandbox) {
-
+            
         }
     }
 }
