@@ -114,6 +114,14 @@ namespace Box {
             }
         }
 
+        public void Write(IStorage storage) {
+            storage.StorageWrite(this);
+        }
+
+        public void ReadStorageObject(IStorage storage) {
+            storage.StorageRead(this);
+        }
+
         protected void TryReadType(StorageItemType type) {
             StorageItemType read_type = (StorageItemType)Get8();
             if(read_type != type) {
