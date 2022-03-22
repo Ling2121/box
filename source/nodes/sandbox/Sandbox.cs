@@ -45,9 +45,6 @@ namespace Box {
         public ConcurrentQueue<(int x,int y)> RegionUnloadInstructQueue {get;protected set;} = new ConcurrentQueue<(int x,int y)>();
         //已加载的区块
         public Dictionary<int,Dictionary<int,SandboxRegion>> Regions {get;protected set;} = new Dictionary<int, Dictionary<int, SandboxRegion>>();
-        
-        //世界生成器
-        public WorldBuild WorldBuild;
         public TileMap LandTileMap {get {
             return LayerTileMaps[SandboxLayer.Land];
         }}
@@ -55,9 +52,15 @@ namespace Box {
             return LayerTileMaps[SandboxLayer.Wall];
         }}
         public Dictionary<SandboxLayer,TileMap> LayerTileMaps = new Dictionary<SandboxLayer, TileMap>();
+        //地图加载器
+        public SanboxLoader SanboxLoader; 
+
+        [Export]
         public int Width {get; protected set;}
+        [Export]
         public int Height {get; protected set;}
-        public Archive Archive {get; protected set;}
+        [Export]
+        public TileSet TileSet;
 
         public Sandbox():this(512,512) {}
 
@@ -80,15 +83,25 @@ namespace Box {
 
         public override void _EnterTree()
         {
+            FileSystem.Instance.Init();
             Register.Instance.Init();
             Game.Instance.CurrentSandbox = this;
-
-            Archive = new Archive("test",this);
         }
 
         public override void _Ready()
         {
             base._Ready();
+
+            foreach(Node node in GetChildren()) {
+                if(node is SanboxLoader) {
+                    SanboxLoader = (SanboxLoader)(node);
+                    break;
+                }
+            }
+
+            if(TileSet == null) {
+                TileSet = GD.Load<TileSet>("res://resource/image/tilesets/default/default.tres");
+            }
 
             TileMap land_tile_map = GetNodeOrNull<TileMap>("LandTileMap");
             TileMap wall_tile_map = GetNodeOrNull<TileMap>("WallTileMap");
@@ -97,7 +110,7 @@ namespace Box {
                 land_tile_map = new TileMap();
                 land_tile_map.ZIndex = -100;
                 land_tile_map.CellSize = new Vector2(REGION_CELL_PIXEL_SIZE,REGION_CELL_PIXEL_SIZE);
-                land_tile_map.TileSet = GD.Load<TileSet>("res://resource/image/tilesets/default/default.tres");
+                land_tile_map.TileSet = TileSet;
                 AddChild(land_tile_map);
             }
 
@@ -105,7 +118,7 @@ namespace Box {
                 wall_tile_map = new TileMap();
                 wall_tile_map.ZIndex = -99;
                 wall_tile_map.CellSize = new Vector2(REGION_CELL_PIXEL_SIZE,REGION_CELL_PIXEL_SIZE);
-                wall_tile_map.TileSet = GD.Load<TileSet>("res://resource/image/tilesets/default/default.tres");
+                wall_tile_map.TileSet = TileSet;
                 AddChild(wall_tile_map);
             }
 
@@ -132,7 +145,7 @@ namespace Box {
                     if(status != SandboxRegionStatus.Loading) {
                         //进行加载
                         SandboxRegion region = GetRegion(r.rx,r.ry);
-                        LoadRegion(region);
+                        SanboxLoader.LoadRegion(region);
                         region.IndexCount ++;
                     } else {
                         if (status == SandboxRegionStatus.Loading) {
@@ -154,12 +167,10 @@ namespace Box {
                     if(status == SandboxRegionStatus.Loading) {
                         region.IndexCount --;
                         if(region.IndexCount == 0) {
-                            //进行卸载(卸载时会进行保存)
-                            UnloadRegion(region);
-                            
+                            SanboxLoader.UnloadRegion(region);
+                            RemoveRegion(region);
                         } else {
-                            //进行保存
-                            SaveRegion(region);
+                            SanboxLoader.SaveRegion(region);
                         }
                     }
                 }
@@ -192,6 +203,14 @@ namespace Box {
             if(Regions[ry].ContainsKey(rx)) {
                 SandboxRegion region = Regions[ry][rx];
                 Regions[ry].Remove(rx);
+
+                for(int y = region.TileOriginY;y < region.TileMaxY;y++) {
+                    for(int x = region.TileOriginX;x < region.TileMaxX;x++) {
+                        LayerTileMaps[SandboxLayer.Land].CallDeferred("set_cell",x,y,TileMap.InvalidCell);
+                        LayerTileMaps[SandboxLayer.Wall].CallDeferred("set_cell",x,y,TileMap.InvalidCell);
+                    }
+                }
+
                 return region;
 
             }
@@ -202,36 +221,16 @@ namespace Box {
             RemoveRegion(region.X,region.Y);
         }
 
-        protected void LoadRegion(SandboxRegion region) {
-            region._Load(this);
-
-            #if BOX_DEBUG
-                Update();
-            #endif
-        }
-
-        protected void UnloadRegion(SandboxRegion region) {
-            region._Unload(this);
-            RemoveRegion(region);
-
-            #if BOX_DEBUG
-                Update();
-            #endif
-        }
-
-        protected void SaveRegion(SandboxRegion region) {
-            region._Save(this);
-        }
         public override void _Draw()
         {
-            foreach(var a in Regions.Values.ToArray()) {
-                if(a.Values.Count > 0) {
-                    var b = a.Values.ToArray<SandboxRegion>();
-                    foreach(var region in b) { 
-                        DrawRect(new Rect2(region.X * Sandbox.REGION_PIXEL_SIZE,region.Y * Sandbox.REGION_PIXEL_SIZE,Sandbox.REGION_PIXEL_SIZE,Sandbox.REGION_PIXEL_SIZE),Colors.Red,false);
-                    }
-                }
-            }
+            // foreach(var a in Regions.Values.ToArray()) {
+            //     if(a.Values.Count > 0) {
+            //         var b = a.Values.ToArray<SandboxRegion>();
+            //         foreach(var region in b) { 
+            //             DrawRect(new Rect2(region.X * Sandbox.REGION_PIXEL_SIZE,region.Y * Sandbox.REGION_PIXEL_SIZE,Sandbox.REGION_PIXEL_SIZE,Sandbox.REGION_PIXEL_SIZE),Colors.Red,false);
+            //         }
+            //     }
+            // }
         }
     }
 }

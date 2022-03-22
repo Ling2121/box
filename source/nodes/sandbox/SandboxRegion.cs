@@ -67,24 +67,24 @@ namespace Box {
             }
         }
 
-        public void StorageWrite(StorageFile file) {
-            file.Write(X);
-            file.Write(Y);
-            file.Write(IndexPool.IndexHash.Count);
+        public void StorageWrite(IStorageFile file) {
+            file.WriteItem(X);
+            file.WriteItem(Y);
+            file.WriteItem(IndexPool.IndexHash.Count);
             foreach(string key in IndexPool.IndexHash.Keys.ToArray()) {
-                file.Write(key);
-                file.Write(IndexPool.IndexHash[key]);
+                file.WriteItem(key);
+                file.WriteItem(IndexPool.IndexHash[key]);
             }
             int[,] land_layer = Layers[SandboxLayer.Land];
             int[,] wall_layer = Layers[SandboxLayer.Wall];
             for(int y = 0;y < Sandbox.REGION_SIZE;y++) {
                 for(int x = 0;x < Sandbox.REGION_SIZE;x++) {
-                    file.Store32((uint)land_layer[x,y]);
+                    file.Write(land_layer[x,y]);
                 }
             }
             for(int y = 0;y < Sandbox.REGION_SIZE;y++) {
                 for(int x = 0;x < Sandbox.REGION_SIZE;x++) {
-                    file.Store32((uint)wall_layer[x,y]);
+                    file.Write(wall_layer[x,y]);
                 }
             }
             // foreach(Node obj in region.Objects.Values) {
@@ -113,18 +113,18 @@ namespace Box {
                 //     }
                 // }
         }
-        public void StorageRead(StorageFile file) {
-            X = file.ReadInt();
-            Y = file.ReadInt();
-            int len = file.ReadInt();
+        public void StorageRead(IStorageFile file) {
+            X = file.TryReadIntItem();
+            Y = file.TryReadIntItem();
+            int len = file.TryReadIntItem();
             for(int i = 0;i<len;i++) {
-                string key = file.ReadString();
-                int index = file.ReadInt();
+                string key = file.TryReadStringItem();
+                int index = file.TryReadIntItem();
                 IndexPool.SetIndex(key,index);
             }
             for(int y = 0;y < Sandbox.REGION_SIZE;y++) {
                 for(int x = 0;x < Sandbox.REGION_SIZE;x++) {
-                    int id = (int)file.Get32();
+                    int id = file.ReadInt();
                     if(id != -1) {
                         string tile_name = IndexPool.GetKey(id);
                         SetCell(SandboxLayer.Land,x,y,tile_name);
@@ -133,7 +133,7 @@ namespace Box {
             }
             for(int y = 0;y < Sandbox.REGION_SIZE;y++) {
                 for(int x = 0;x < Sandbox.REGION_SIZE;x++) {
-                    int id = (int)file.Get32();
+                    int id = file.ReadInt();
                     if(id != -1) {
                         string tile_name = IndexPool.GetKey(id);
                         SetCell(SandboxLayer.Wall,x,y,tile_name);
@@ -170,51 +170,6 @@ namespace Box {
                 //     }
                 //     obj_file.Close();
                 // }
-        }
-
-        public void _Load(Sandbox sandbox) {
-            Status = SandboxRegionStatus.Loading;
-        
-            #if BOX_DEBUG
-                
-                try {
-                    sandbox.Archive.ReadRegion(this);
-                } catch (Exception e) {
-                    GD.Print(e);
-                }
-                
-                
-                // string[] namelist = {"grass","sand","stone","water"};
-                // for(int y = 0;y < Sandbox.REGION_SIZE;y++) {
-                //     for(int x = 0;x < Sandbox.REGION_SIZE;x++) {
-                //         SetCell(SandboxLayer.Land,x,y,namelist[(int)GD.RandRange(0,namelist.Length)]);
-                //     }
-                // }
-                // _Save(sandbox);
-
-            #endif
-        }
-
-        public void _Unload(Sandbox sandbox) {
-            //_Save(sandbox);
-            Status = SandboxRegionStatus.Unload;
-
-            #if BOX_DEBUG
-                //GD.Print($"卸载区块({X}:{Y})");
-                for(int y = 0;y < Sandbox.REGION_SIZE;y++) {
-                    for(int x = 0;x < Sandbox.REGION_SIZE;x++) {
-                        SetCell(SandboxLayer.Land,x,y,"");
-                    }
-                }
-            #endif
-        }
-
-        public void _Save(Sandbox sandbox) {
-            try {
-                sandbox.Archive.SaveRegion(this);
-            } catch (Exception e) {
-                GD.Print(e.StackTrace);
-            }
         }
     }
 }
