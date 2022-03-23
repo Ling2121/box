@@ -3,7 +3,7 @@
 [ext_resource path="res://resource/image/tilesets/default/default.png" type="Texture" id=1]
 
 [resource]
-0/name = "grass"
+0/name = "grass1"
 0/texture = ExtResource( 1 )
 0/tex_offset = Vector2( 0, 0 )
 0/modulate = Color( 1, 1, 1, 1 )
@@ -59,7 +59,7 @@
 3/shape_one_way_margin = 0.0
 3/shapes = [  ]
 3/z_index = 0
-4/name = "grass_jungle"
+4/name = "grass2"
 4/texture = ExtResource( 1 )
 4/tex_offset = Vector2( 0, 0 )
 4/modulate = Color( 1, 1, 1, 1 )
@@ -73,7 +73,7 @@
 4/shape_one_way_margin = 0.0
 4/shapes = [  ]
 4/z_index = 0
-5/name = "grass_swamp"
+5/name = "grass3"
 5/texture = ExtResource( 1 )
 5/tex_offset = Vector2( 0, 0 )
 5/modulate = Color( 1, 1, 1, 1 )

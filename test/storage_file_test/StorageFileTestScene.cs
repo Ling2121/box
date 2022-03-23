@@ -100,6 +100,27 @@ namespace Box {
             Test("test/storage_file_test/gdio.dat",new GDIOStorageFile());
             GD.Print(nameof(SYSIOStorageFile));
             Test("test/storage_file_test/sysio.dat",new SYSIOStorageFile());
+
+            GD.Print("GDIOStorageFile read SYSIOStorageFile");
+            if(file.Open("test/storage_file_test/sysio.dat",StorageFileMode.Read)) {
+                GD.Print("文件打开成功，开始读取...");
+                GD.Print("  Read:",file.TryReadIntItem());
+                GD.Print("  Read:",file.TryReadIntItem());
+                GD.Print("  Read:",file.TryReadIntItem());
+                GD.Print("  Read:",file.TryReadFloatItem());
+                GD.Print("  Read:",file.TryReadFloatItem());
+                GD.Print("   ");
+                GD.Print("  Read:",file.TryReadStringItem());
+                GD.Print("  Read:",file.TryReadStringItem());
+                GD.Print("   ");
+                GD.Print("  Read:",ArrToStr(file.TryReadArrayItem()));
+                GD.Print("  Read:",ArrToStr(file.TryReadArrayItem()));
+                GD.Print("  Read:",ArrToStr(file.TryReadArrayItem()));
+                GD.Print("   ");
+                GD.Print("  Read:",HashToStr(file.TryReadHashtableItem()));
+                file.Close();
+                GD.Print("读取完成");
+            }
         }
     }
 }

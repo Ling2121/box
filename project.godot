@@ -15,7 +15,7 @@ config/icon="res://icon.png"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/CSClassName/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/box_editor/plugin.cfg" )
 
 [global]
 
