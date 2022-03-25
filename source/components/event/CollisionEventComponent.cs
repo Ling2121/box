@@ -6,7 +6,9 @@ namespace Box.Components {
     [ClassName(nameof(CollisionEventComponent))]
     public class CollisionEventComponent : Node2D {
         [Signal]
-        public delegate void Collision();
+        public delegate void CollisionEntered(Node self,Node collision);
+        [Signal]
+        public delegate void CollisionExited(Node self,Node collision);
         public Area2D CollisionDecisionArea;
         Node parent;
         public override void _Ready()
@@ -47,6 +49,7 @@ namespace Box.Components {
             if(CollisionDecisionArea != null) {
                 AddChild(CollisionDecisionArea);
                 CollisionDecisionArea.Connect("body_entered",this,nameof(_BodyEntered));
+                CollisionDecisionArea.Connect("body_exited",this,nameof(_BodyExited));
             } else {
                 GD.PrintErr($"{nameof(InterplayEventComponent)}需要有Area2D节点为子节点(父类为继承自PhysicsBody2D时不需要)");
             }
@@ -54,7 +57,19 @@ namespace Box.Components {
 
         public void _BodyEntered(Node body) {
             if(body != parent) {
-                Game.Instance.EventManager.RequestEvent(nameof(CollisionEvent),parent,body);
+                Game.Instance.EventManager.RequestEvent(nameof(CollisionEvent),parent,new CollisionEvent.Pack{
+                    collision = body,
+                    is_enter = true
+                });
+            }
+        }
+
+        public void _BodyExited(Node body) {
+            if(body != parent) {
+                Game.Instance.EventManager.RequestEvent(nameof(CollisionEvent),parent,new CollisionEvent.Pack{
+                    collision = body,
+                    is_enter = false
+                });
             }
         }
 

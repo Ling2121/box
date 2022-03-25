@@ -14,7 +14,7 @@ namespace Box
         public const int MONTH_LENGHT = 30;//1月 = 30天
         public const int YEAR_LENGHT = 14;//1年=14月
 
-        [Export(PropertyHint.None,"基准秒(现实秒数为单位)。1基准秒=1游戏秒")]
+        [Export]//基准秒(现实秒数为单位)。1基准秒=1游戏秒
         public float BenchmarkTime = 0.01f;
         [Export]
         public int Year {get;protected set;} = 2780;//年
@@ -24,9 +24,9 @@ namespace Box
         public int Week {get;protected set;} = 1;//周
         [Export]
         public int Day {get;protected set;} = 1;//日
-        [Export(PropertyHint.None,"小时")]
+        [Export]
         public int Hour {get;protected set;} = 1;//时
-        [Export(PropertyHint.None,"分钟")]
+        [Export]
         public int Minute {get;protected set;} = 0;//分
         [Export]
         public int Seconds {get;protected set;} = 0;//秒

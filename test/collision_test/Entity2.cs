@@ -9,7 +9,7 @@ public class Entity2 : StaticBody2D
     public override void _Ready()
     {
         collision_event = GetNodeOrNull<CollisionEventComponent>(nameof(CollisionEventComponent));
-        collision_event?.Connect(nameof(CollisionEventComponent.Collision),this,nameof(_Collision));
+        collision_event?.Connect(nameof(CollisionEventComponent.CollisionEntered),this,nameof(_Collision));
     }
 
     public void _Collision(CollisionObject2D a,CollisionObject2D b) {

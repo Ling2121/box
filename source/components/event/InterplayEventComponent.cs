@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using Godot;
 using Box.Events;
@@ -5,6 +6,8 @@ using Box.Events;
 namespace Box.Components {
     [ClassName(nameof(InterplayEventComponent))]
     public class InterplayEventComponent : Node2D {
+        public static InterplayEventComponent Select;
+
         [Signal]
         public delegate void EmitInterplay(Node receive_object,InterplayType type);
         [Signal]
@@ -57,10 +60,14 @@ namespace Box.Components {
         }
 
         public void _MouseEntered() {
-            if(Input.IsMouseButtonPressed((int)ButtonList.Left)) {
-                Game.Instance.EventManager.RequestEvent(nameof(InterplayEvent),parent,null);
-            }
+            Select = this;
         }
 
+        public void EmitInterplayEvent(InterplayType interplay_type,Node receive_object) {
+            Game.Instance.EventManager.RequestEvent(nameof(InterplayEvent),parent,new InterplayEvent.Pack {
+                type = interplay_type,
+                receive_object = receive_object
+            });
+        }
     }
 }

@@ -31,9 +31,7 @@ namespace Box.Components {
             } 
             else if(move_type == MoveType.Node2D) {
                 node_2d.Position += vec * delta;
-            }
-
-            
+            }            
         }
         public override void _Ready()
         {

@@ -4,18 +4,27 @@ using Box.Components;
 namespace Box.Events {
     [Register(nameof(CollisionEvent))]
     public class CollisionEvent : IEvent {
-        public bool IsEnterEvent(object a,object b) {
-            return a is Node && b is Node;
+        public struct Pack {
+            public Node collision;
+            public bool is_enter;
         }
-        public void _Execute(object a,object b) {
-            Node a_node = a as Node;
-            Node b_node = b as Node;
+        public bool IsEnterEvent(object a,object b) {
+            return a is Node && b is Pack;
+        }
+        public void _Execute(object self_,object pack_) {
+            Node self = self_ as Node;
+            Pack pack = (Pack)pack_;
 
-            CollisionEventComponent a_collision_event = a_node?.GetNodeOrNull<CollisionEventComponent>(nameof(CollisionEventComponent));
-            a_collision_event?.EmitSignal(nameof(CollisionEventComponent.Collision),a,b);
+            string event_name = nameof(CollisionEventComponent.CollisionExited);
+            if(pack.is_enter) {
+                event_name = nameof(CollisionEventComponent.CollisionEntered);
+            }
 
-            CollisionEventComponent b_collision_event = b_node?.GetNodeOrNull<CollisionEventComponent>(nameof(CollisionEventComponent));
-            b_collision_event?.EmitSignal(nameof(CollisionEventComponent.Collision),b,a);
+            CollisionEventComponent a_collision_event = self?.GetNodeOrNull<CollisionEventComponent>(nameof(CollisionEventComponent));
+            a_collision_event?.EmitSignal(event_name,self,pack.collision);
+
+            CollisionEventComponent b_collision_event = pack.collision?.GetNodeOrNull<CollisionEventComponent>(nameof(CollisionEventComponent));
+            b_collision_event?.EmitSignal(event_name,pack.collision,self);
         }
     }
 }
