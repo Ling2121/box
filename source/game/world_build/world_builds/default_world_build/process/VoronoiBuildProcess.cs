@@ -31,7 +31,6 @@ namespace Box.WorldBuils.Default {
 
             table.SetValue<Voronoi>("Voronoi图",voronoi);
 
-            #warning 在DEBUG模式下VoronoiMapBuildProcess会对 “缓存画布” 进行绘制
             #if BOX_DEBUG
             canvas.DrawBegin();
                 canvas.DrawRectangle(0,0,width,height,true,0);

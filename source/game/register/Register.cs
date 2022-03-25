@@ -10,6 +10,7 @@ namespace Box {
             Block,
             Item,
             Biome,
+            InterplayEvent,
 
             Undefined,
         }
@@ -18,6 +19,7 @@ namespace Box {
         protected Dictionary<string,Type> blocks = new Dictionary<string, Type>();
         protected Dictionary<string,Type> entities = new Dictionary<string, Type>();
         protected Dictionary<string,IBiome> biomes = new Dictionary<string, IBiome>();
+        protected Dictionary<string,IEvent> events = new Dictionary<string, IEvent>();
 
         public List<string> BiomeNameList = new List<string>();
 
@@ -25,6 +27,7 @@ namespace Box {
         protected Type BlockType = typeof(IBlock);
         protected Type ItemType = typeof(IItem);
         protected Type BiomeType = typeof(IBiome);
+        protected Type InterplayEventType = typeof(IEvent);
 
         protected class UndefinedRegisterType :Exception {
             public UndefinedRegisterType(Type type):base($"未定的注册类型. -> {type.FullName}"){}
@@ -45,7 +48,7 @@ namespace Box {
             else if (BlockType.IsAssignableFrom(t)) type = RegisterType.Block;
             else if (ItemType.IsAssignableFrom(t)) type = RegisterType.Item;
             else if (BiomeType.IsAssignableFrom(t)) type = RegisterType.Biome;
-
+            else if (InterplayEventType.IsAssignableFrom(t)) type = RegisterType.InterplayEvent;
             return type;
         }
 
@@ -74,6 +77,10 @@ namespace Box {
                             IBiome biome = (IBiome)Activator.CreateInstance(type);
                             BiomeNameList.Add(reg_name);
                             biomes[reg_name] = biome;
+                        }break;
+                        case RegisterType.InterplayEvent : {
+                            IEvent event_ = (IEvent)Activator.CreateInstance(type);
+                            events[reg_name] = event_;
                         }break;
                     }
                 }
@@ -131,6 +138,11 @@ namespace Box {
         public IBiome GetBiome(string name) {
             if(!biomes.ContainsKey(name)) return null;
             return biomes[name];
+        }
+
+        public IEvent GetEvent(string name) {
+            if(!events.ContainsKey(name)) return null;
+            return events[name];
         }
     }
 }

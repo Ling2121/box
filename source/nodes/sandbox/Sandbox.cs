@@ -61,6 +61,7 @@ namespace Box {
         public int Height {get; protected set;}
         [Export]
         public TileSet TileSet;
+    
 
         public Sandbox():this(512,512) {}
 
@@ -83,9 +84,7 @@ namespace Box {
 
         public override void _EnterTree()
         {
-            FileSystem.Instance.Init();
-            Register.Instance.Init();
-            Game.Instance.CurrentSandbox = this;
+            Game.Instance.Sandbox = this;
         }
 
         public override void _Ready()

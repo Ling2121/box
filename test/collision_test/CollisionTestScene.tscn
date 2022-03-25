@@ -1,0 +1,54 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://source/components/move/MoveControllerComponent.cs" type="Script" id=1]
+[ext_resource path="res://source/components/move/MoveComponent.cs" type="Script" id=2]
+[ext_resource path="res://source/components/event/CollisionEventComponent.cs" type="Script" id=3]
+[ext_resource path="res://test/collision_test/Entity1.cs" type="Script" id=4]
+[ext_resource path="res://test/collision_test/Entity2.cs" type="Script" id=5]
+[ext_resource path="res://source/game/event/EventManager.cs" type="Script" id=6]
+
+[sub_resource type="RectangleShape2D" id=1]
+
+[sub_resource type="RectangleShape2D" id=2]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="EventManager" type="Node" parent="."]
+script = ExtResource( 6 )
+
+[node name="Entity1" type="KinematicBody2D" parent="."]
+position = Vector2( 117, 38 )
+script = ExtResource( 4 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Entity1"]
+shape = SubResource( 1 )
+
+[node name="MoveComponent" type="Node" parent="Entity1"]
+script = ExtResource( 2 )
+
+[node name="MoveControllerComponent" type="Node" parent="Entity1"]
+script = ExtResource( 1 )
+Speed = 50.0
+
+[node name="CollisionEventComponent" type="Node2D" parent="Entity1"]
+script = ExtResource( 3 )
+
+[node name="Entity2" type="StaticBody2D" parent="."]
+position = Vector2( 191, 47 )
+script = ExtResource( 5 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Entity2"]
+shape = SubResource( 2 )
+
+[node name="CollisionEventComponent" type="Node2D" parent="Entity2"]
+script = ExtResource( 3 )
+
+[node name="Entity3" type="StaticBody2D" parent="."]
+position = Vector2( 191, 71 )
+script = ExtResource( 5 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Entity3"]
+shape = SubResource( 2 )
+
+[node name="CollisionEventComponent" type="Node2D" parent="Entity3"]
+script = ExtResource( 3 )

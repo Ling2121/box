@@ -1,5 +1,7 @@
 namespace Box {
     public class Game : Singleton<Game> {
-        public Sandbox CurrentSandbox;
+        public Sandbox Sandbox;
+        public TimeSystem TimeSystem;
+        public EventManager EventManager;
     }
 }

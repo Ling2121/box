@@ -14,7 +14,7 @@ namespace Box.Components {
         protected int old_max_y = 0;
 
         protected void UpdateLoad(bool is_unload) {
-            Sandbox sandbox = Game.Instance.CurrentSandbox;
+            Sandbox sandbox = Game.Instance.Sandbox;
             (int cx,int cy) = Sandbox.WorldToRegion(GetParent<Node2D>().Position);
             int min_x = cx - LoadRadius,min_y = cy - LoadRadius;
             int max_x = cx + LoadRadius,max_y = cy + LoadRadius;

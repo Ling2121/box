@@ -22,8 +22,10 @@ namespace Box {
         public long UnloadTimestamp = 0;
         public int IndexCount = 0;
         public Dictionary<Node,Node> Objects {get;protected set;} = new Dictionary<Node, Node>();
-        
+    
         public Dictionary<SandboxLayer,int[,]> Layers = new Dictionary<SandboxLayer, int[,]>();
+        public Dictionary<int,IBlock> CellBindBlocks = new Dictionary<int, IBlock>();
+
         public NumberIndexPool IndexPool = new NumberIndexPool();
 
         public Sandbox Sandbox;
@@ -48,6 +50,17 @@ namespace Box {
                     Layers[SandboxLayer.Wall][x,y] = -1;
                 }
             }
+        }
+
+        public void GetCellBlockBind(int x,int y) {
+
+        }
+
+        public void CellBindBlock(SandboxLayer layer,IBlock block,int x,int y) {
+            int index = y * Sandbox.REGION_SIZE + x;
+            CellBindBlocks[index] = block;
+            block.X = x;
+            block.Y = y;
         }
 
         public void SetCell(SandboxLayer layer,int x,int y,string tile_name) {
