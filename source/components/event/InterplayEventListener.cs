@@ -1,17 +1,18 @@
 using System.Collections.Generic;
-using System;
 using Godot;
 using Box.Events;
+using Box.Itmes;
+
 
 namespace Box.Components {
-    [ClassName(nameof(InterplayEventComponent))]
-    public class InterplayEventComponent : Node2D {
-        public static InterplayEventComponent Select;
+    [ClassName(nameof(InterplayEventListener))]
+    public class InterplayEventListener : Node2D {
+        public static InterplayEventListener Select;
 
         [Signal]
-        public delegate void EmitInterplay(Node receive_object,InterplayType type);
+        public delegate void emit_interplay(InterplayType type,Node receive_object,Node item);
         [Signal]
-        public delegate void ReceiveInterplay(Node emit_object,InterplayType type);
+        public delegate void receive_interplay(InterplayType type,Node emit_object,Node item);
 
         [Export]
         public Area2D ClickDecisionArea;
@@ -54,8 +55,9 @@ namespace Box.Components {
 
             if(ClickDecisionArea != null) {
                 ClickDecisionArea.Connect("mouse_entered",this,nameof(_MouseEntered));
+                ClickDecisionArea.Connect("mouse_exited",this,nameof(_MouseExited));
             } else {
-                GD.PrintErr($"{nameof(InterplayEventComponent)}需要有Area2D节点为子节点(父类为继承自PhysicsBody2D时不需要)");
+                GD.PrintErr($"{nameof(InterplayEventListener)}需要有Area2D节点为子节点(父类为继承自PhysicsBody2D时不需要)");
             }
         }
 
@@ -63,11 +65,21 @@ namespace Box.Components {
             Select = this;
         }
 
-        public void EmitInterplayEvent(InterplayType interplay_type,Node receive_object) {
-            Game.Instance.EventManager.RequestEvent(nameof(InterplayEvent),parent,new InterplayEvent.Pack {
-                type = interplay_type,
-                receive_object = receive_object
-            });
+        public void _MouseExited() {
+            if(Select == this) {
+                Select = null;
+            }
+        }
+
+        public override void _ExitTree()
+        {
+            if(Select == this) {
+                Select = null;
+            }
+        }
+
+        public void EmitInterplayEvent(InterplayType interplay_type,Node receive_object,Node item) {
+            Game.Instance.EventManager.RequestEvent(nameof(InterplayEvent),interplay_type,parent,receive_object,item);
         }
     }
 }

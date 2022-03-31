@@ -1,30 +1,38 @@
 using Godot;
 using Box.Components;
+using Box.Itmes;
+using Box.Itmes.Tools;
 
 namespace Box.Events {
     public enum InterplayType {
-        MouseLeft,
-        MouseRight,
+        Attack,
+        Interplay,
         MouseCenter,
     }
 
     [Register(nameof(InterplayEvent))]
     public class InterplayEvent : IEvent {
-        public struct Pack {
-            public InterplayType type;
-            public Node receive_object;
-        }
 
-        public bool IsEnterEvent(object a,object b) {
-            return a is Node && b is Pack;
+        public bool IsEnterEvent(params object[] args) {
+            if(args.Length < 4) return false;
+            return 
+                args[0] is InterplayType && //互动类型
+                args[1] is Node &&          //发出互动的对象
+                args[2] is Node &&          //接收互动的对象
+                args[3] is Node             //互动使用的物体
+                ;
         }
-        public void _Execute(object interplay_object,object pack_) {
-            Node obj = interplay_object as Node;
-            Pack pack = (Pack)pack_;
+        public void Execute(params object[] args) {
+            var interplay_type = (InterplayType)args[0];
+            var emit_object    = args[1] as Node;
+            var receive_object = args[2] as Node;
+            var interplay_item = args[3] as Node;
+
+            InterplayEventListener emit_event = emit_object.GetNodeOrNull<InterplayEventListener>(nameof(InterplayEventListener));
+            emit_event?.EmitSignal(nameof(InterplayEventListener.emit_interplay),receive_object,interplay_type,interplay_item);
             
-            InterplayEventComponent interplay_event = obj?.GetNodeOrNull<InterplayEventComponent>(nameof(InterplayEventComponent));
-            interplay_event?.EmitSignal(nameof(InterplayEventComponent.EmitInterplay),pack.receive_object,pack.type);
-            interplay_event?.EmitSignal(nameof(InterplayEventComponent.ReceiveInterplay),interplay_object,pack.type);
+            InterplayEventListener receive_event = receive_object.GetNodeOrNull<InterplayEventListener>(nameof(InterplayEventListener));
+            receive_event?.EmitSignal(nameof(InterplayEventListener.receive_interplay),emit_object,interplay_type,interplay_item);
         }
     }
 }

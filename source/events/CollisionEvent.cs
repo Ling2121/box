@@ -4,27 +4,25 @@ using Box.Components;
 namespace Box.Events {
     [Register(nameof(CollisionEvent))]
     public class CollisionEvent : IEvent {
-        public struct Pack {
-            public Node collision;
-            public bool is_enter;
+        public bool IsEnterEvent(params object[] args) {
+            if(args.Length < 3) return false;
+            return args[0] is Node && args[1] is Node && args[2] is bool;
         }
-        public bool IsEnterEvent(object a,object b) {
-            return a is Node && b is Pack;
-        }
-        public void _Execute(object self_,object pack_) {
-            Node self = self_ as Node;
-            Pack pack = (Pack)pack_;
+        public void Execute(params object[] args) {
+            Node self = args[0] as Node;
+            Node collision = args[1] as Node;
+            bool is_enter = (bool)args[2];
 
-            string event_name = nameof(CollisionEventComponent.CollisionExited);
-            if(pack.is_enter) {
-                event_name = nameof(CollisionEventComponent.CollisionEntered);
+            string event_name = nameof(CollisionEventListener.collision_exited);
+            if(is_enter) {
+                event_name = nameof(CollisionEventListener.collision_entered);
             }
 
-            CollisionEventComponent a_collision_event = self?.GetNodeOrNull<CollisionEventComponent>(nameof(CollisionEventComponent));
-            a_collision_event?.EmitSignal(event_name,self,pack.collision);
+            CollisionEventListener a_collision_event = self?.GetNodeOrNull<CollisionEventListener>(nameof(CollisionEventListener));
+            a_collision_event?.EmitSignal(event_name,self,collision);
 
-            CollisionEventComponent b_collision_event = pack.collision?.GetNodeOrNull<CollisionEventComponent>(nameof(CollisionEventComponent));
-            b_collision_event?.EmitSignal(event_name,pack.collision,self);
+            CollisionEventListener b_collision_event = collision?.GetNodeOrNull<CollisionEventListener>(nameof(CollisionEventListener));
+            b_collision_event?.EmitSignal(event_name,collision,self);
         }
     }
 }

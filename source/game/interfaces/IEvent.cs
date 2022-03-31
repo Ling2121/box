@@ -1,6 +1,6 @@
 namespace Box{    
     public interface IEvent {
-        bool IsEnterEvent(object a,object b);
-        void _Execute(object a,object b);
+        bool IsEnterEvent(params object[] args);
+        void Execute(params object[] args);
     }
 }

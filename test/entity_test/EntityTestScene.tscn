@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://source/nodes/entities/lifes/spine_man/SpineMan.tscn" type="PackedScene" id=1]
+[ext_resource path="res://source/nodes/entities/lifes/player/Player.tscn" type="PackedScene" id=2]
+[ext_resource path="res://source/game/event/EventManager.cs" type="Script" id=3]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="EventManager" type="Node" parent="."]
+script = ExtResource( 3 )
+
+[node name="Player" parent="." instance=ExtResource( 2 )]
+position = Vector2( 193, 209 )
+
+[node name="SpineMan2" parent="." instance=ExtResource( 1 )]
+position = Vector2( 213, 467 )
+
+[node name="SpineMan" parent="." instance=ExtResource( 1 )]
+position = Vector2( 595, 310 )

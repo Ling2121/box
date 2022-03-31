@@ -5,25 +5,25 @@ using Box.Components;
 namespace Box.Entities.Lifes {
     public class Player : KinematicBody2D
     {
-        AttackComponent AttackComponent;
+        HandComponent HandComponent;
         HPComponent HPComponent;
 
         public override void _Ready()
         {
-            AttackComponent = GetNode<AttackComponent>(nameof(AttackComponent));
+            HandComponent = GetNode<HandComponent>(nameof(HandComponent));
             HPComponent = GetNode<HPComponent>(nameof(HPComponent));
 
-            AttackComponent.Connect(nameof(AttackComponent.Attack),this,nameof(_Attack));
-            AttackComponent.Connect(nameof(AttackComponent.ReceiveAttack),this,nameof(_ReceiveAttack));
+            HandComponent.Connect(nameof(HandComponent.emit_attack),this,nameof(_Attack));
+            HandComponent.Connect(nameof(HandComponent.receive_attack),this,nameof(_ReceiveAttack));
             HPComponent.Connect(nameof(HPComponent.Injured),this,nameof(_Injured));
             HPComponent.Connect(nameof(HPComponent.Recovery),this,nameof(_Recovery));
         }
 
-        public void _Attack(Node receive_object) {
+        public void _Attack(Node receive_object,Itmes.Tools.BaseTool item) {
             GD.Print($"打了{receive_object.Name}一下");
         }
 
-        public void _ReceiveAttack(Node emit_object) {
+        public void _ReceiveAttack(Node emit_object,Itmes.Tools.BaseTool item) {
             GD.Print($"你被{emit_object.Name}打了一下");
         }
 

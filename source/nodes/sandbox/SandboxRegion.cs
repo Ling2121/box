@@ -59,8 +59,6 @@ namespace Box {
         public void CellBindBlock(SandboxLayer layer,IBlock block,int x,int y) {
             int index = y * Sandbox.REGION_SIZE + x;
             CellBindBlocks[index] = block;
-            block.X = x;
-            block.Y = y;
         }
 
         public void SetCell(SandboxLayer layer,int x,int y,string tile_name) {

@@ -3,12 +3,12 @@ using Godot;
 using Box.Events;
 
 namespace Box.Components {
-    [ClassName(nameof(CollisionEventComponent))]
-    public class CollisionEventComponent : Node2D {
+    [ClassName(nameof(CollisionEventListener))]
+    public class CollisionEventListener : Node2D {
         [Signal]
-        public delegate void CollisionEntered(Node self,Node collision);
+        public delegate void collision_entered(Node self,Node collision);
         [Signal]
-        public delegate void CollisionExited(Node self,Node collision);
+        public delegate void collision_exited(Node self,Node collision);
         public Area2D CollisionDecisionArea;
         Node parent;
         public override void _Ready()
@@ -51,25 +51,19 @@ namespace Box.Components {
                 CollisionDecisionArea.Connect("body_entered",this,nameof(_BodyEntered));
                 CollisionDecisionArea.Connect("body_exited",this,nameof(_BodyExited));
             } else {
-                GD.PrintErr($"{nameof(InterplayEventComponent)}需要有Area2D节点为子节点(父类为继承自PhysicsBody2D时不需要)");
+                GD.PrintErr($"{nameof(InterplayEventListener)}需要有Area2D节点为子节点(父类为继承自PhysicsBody2D时不需要)");
             }
         }
 
         public void _BodyEntered(Node body) {
             if(body != parent) {
-                Game.Instance.EventManager.RequestEvent(nameof(CollisionEvent),parent,new CollisionEvent.Pack{
-                    collision = body,
-                    is_enter = true
-                });
+                Game.Instance.EventManager.RequestEvent(nameof(CollisionEvent),parent,body,true);
             }
         }
 
         public void _BodyExited(Node body) {
             if(body != parent) {
-                Game.Instance.EventManager.RequestEvent(nameof(CollisionEvent),parent,new CollisionEvent.Pack{
-                    collision = body,
-                    is_enter = false
-                });
+                Game.Instance.EventManager.RequestEvent(nameof(CollisionEvent),parent,body,false);
             }
         }
 

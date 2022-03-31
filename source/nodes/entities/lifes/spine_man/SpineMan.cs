@@ -12,31 +12,33 @@ namespace Box.Entities.Lifes {
 
         protected float hurt_timer = 0;
 
-        CollisionEventComponent CollisionEventComponent;
-        AttackComponent AttackComponent;
+        CollisionEventListener CollisionEventListener;
+        HandComponent HandComponent;
         HPComponent HPComponent;
 
         public Dictionary<Node,Node> hurt_table = new Dictionary<Node, Node>();
 
         public override void _Ready()
         {
-            CollisionEventComponent = GetNode<CollisionEventComponent>(nameof(CollisionEventComponent));
+            CollisionEventListener = GetNode<CollisionEventListener>(nameof(CollisionEventListener));
             HPComponent = GetNode<HPComponent>(nameof(HPComponent));
-            AttackComponent = GetNode<AttackComponent>(nameof(AttackComponent));
+            HandComponent = GetNode<HandComponent>(nameof(HandComponent));
             
-            AttackComponent.Connect(nameof(AttackComponent.Attack),this,nameof(_Attack));
+            HandComponent.Connect(nameof(HandComponent.emit_attack),this,nameof(_Attack));
 
-            CollisionEventComponent.Connect(nameof(CollisionEventComponent.CollisionEntered),this,nameof(_CollisionEntered));
-            CollisionEventComponent.Connect(nameof(CollisionEventComponent.CollisionExited),this,nameof(_CollisionExited));
+            CollisionEventListener.Connect(nameof(CollisionEventListener.collision_entered),this,nameof(_CollisionEntered));
+            CollisionEventListener.Connect(nameof(CollisionEventListener.collision_exited),this,nameof(_CollisionExited));
         
             HPComponent.Connect(nameof(HPComponent.Injured),this,nameof(_Injured));
         }
 
         public void _CollisionEntered(Node self,Node collision) {
+            GD.Print("enter:",collision.Name);
             hurt_table[collision] = collision;
         }
 
         public void _CollisionExited(Node self,Node collision) {
+            GD.Print("exit:",collision.Name);
             hurt_table.Remove(collision);
         }
 
@@ -54,7 +56,7 @@ namespace Box.Entities.Lifes {
             if(hurt_timer >= HurtSpeed){
                 hurt_timer = 0;
                 foreach(Node entity in hurt_table.Values) {
-                    AttackComponent.EmitAttack(entity);
+                    HandComponent.EmitAttack(entity);
                 }
             }
         }
