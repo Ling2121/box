@@ -12,7 +12,10 @@ namespace Box.Components {
 
         public override void _Ready()
         {
-            InterplayEventListener = GetParent().GetNodeOrNull<InterplayEventListener>(nameof(InterplayEventListener));
+            EventListeningComponent event_listening = GetParent().GetNodeOrNull<EventListeningComponent>(nameof(EventListeningComponent));
+
+            InterplayEventListener = event_listening.GetListener<InterplayEventListener>();
+
             HandComponent = GetParent().GetNode<HandComponent>(nameof(HandComponent));
         }
 
@@ -37,14 +40,16 @@ namespace Box.Components {
                         if(InterplayEventListener.Select != null) {
                             if(interplay_type == InterplayType.Attack) {
                                 if(InterplayEventListener.Select != InterplayEventListener) {
-                                    HandComponent.EmitAttack(InterplayEventListener.Select.GetParent());
+                                    HandComponent.EmitAttack(InterplayEventListener.Select.Entity);
                                 }
                             }
                             if(interplay_type == InterplayType.Interplay) {
-                                HandComponent.EmitUse(InterplayEventListener.Select.GetParent());
+                                HandComponent.EmitUse(InterplayEventListener.Select.Entity);
                             }
                         } else {
-                            InterplayEventListener.EmitInterplayEvent(interplay_type,GetParent(),GetParent());
+                            // if(interplay_type == InterplayType.Interplay) {
+                            //     HandComponent.EmitUse();
+                            // }
                         }
                     }
                 }

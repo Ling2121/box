@@ -1,14 +1,12 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://source/components/properties/HPComponent.cs" type="Script" id=1]
-[ext_resource path="res://source/components/event/InterplayEventListener.cs" type="Script" id=2]
+[ext_resource path="res://source/components/event/EventListeningComponent.cs" type="Script" id=2]
 [ext_resource path="res://source/components/move/MoveComponent.cs" type="Script" id=3]
 [ext_resource path="res://source/components/life/HandComponent.cs" type="Script" id=4]
+[ext_resource path="res://source/components/event/listener/InterplayEventListener.cs" type="Script" id=5]
 
 [node name="BaseLife" type="KinematicBody2D"]
-
-[node name="InterplayEventListener" type="Node2D" parent="."]
-script = ExtResource( 2 )
 
 [node name="HPComponent" type="Node" parent="."]
 script = ExtResource( 1 )
@@ -18,3 +16,9 @@ script = ExtResource( 3 )
 
 [node name="HandComponent" type="Node2D" parent="."]
 script = ExtResource( 4 )
+
+[node name="EventListeningComponent" type="Node2D" parent="."]
+script = ExtResource( 2 )
+
+[node name="InterplayEventListener" type="Node2D" parent="EventListeningComponent"]
+script = ExtResource( 5 )

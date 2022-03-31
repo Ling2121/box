@@ -28,10 +28,13 @@ namespace Box.Events {
             var receive_object = args[2] as Node;
             var interplay_item = args[3] as Node;
 
-            InterplayEventListener emit_event = emit_object.GetNodeOrNull<InterplayEventListener>(nameof(InterplayEventListener));
+            EventListeningComponent emit_event_listening = emit_object.GetNodeOrNull<EventListeningComponent>(nameof(EventListeningComponent));
+            InterplayEventListener emit_event = emit_event_listening?.GetListener<InterplayEventListener>();
             emit_event?.EmitSignal(nameof(InterplayEventListener.emit_interplay),receive_object,interplay_type,interplay_item);
             
-            InterplayEventListener receive_event = receive_object.GetNodeOrNull<InterplayEventListener>(nameof(InterplayEventListener));
+
+            EventListeningComponent receive_event_listening = receive_object.GetNodeOrNull<EventListeningComponent>(nameof(EventListeningComponent));
+            InterplayEventListener receive_event = receive_event_listening?.GetListener<InterplayEventListener>();
             receive_event?.EmitSignal(nameof(InterplayEventListener.receive_interplay),emit_object,interplay_type,interplay_item);
         }
     }

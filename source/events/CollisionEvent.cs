@@ -17,11 +17,12 @@ namespace Box.Events {
             if(is_enter) {
                 event_name = nameof(CollisionEventListener.collision_entered);
             }
-
-            CollisionEventListener a_collision_event = self?.GetNodeOrNull<CollisionEventListener>(nameof(CollisionEventListener));
+            EventListeningComponent a_event_listening = self.GetNodeOrNull<EventListeningComponent>(nameof(EventListeningComponent));
+            CollisionEventListener a_collision_event = a_event_listening?.GetListener<CollisionEventListener>();
             a_collision_event?.EmitSignal(event_name,self,collision);
 
-            CollisionEventListener b_collision_event = collision?.GetNodeOrNull<CollisionEventListener>(nameof(CollisionEventListener));
+            EventListeningComponent b_event_listening = collision.GetNodeOrNull<EventListeningComponent>(nameof(EventListeningComponent));
+            CollisionEventListener b_collision_event = b_event_listening?.GetListener<CollisionEventListener>();
             b_collision_event?.EmitSignal(event_name,collision,self);
         }
     }

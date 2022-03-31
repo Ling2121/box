@@ -4,17 +4,22 @@ using Box.Events;
 
 namespace Box.Components {
     [ClassName(nameof(CollisionEventListener))]
-    public class CollisionEventListener : Node2D {
+    public class CollisionEventListener : Node2D,IEventListener {
         [Signal]
         public delegate void collision_entered(Node self,Node collision);
         [Signal]
         public delegate void collision_exited(Node self,Node collision);
         public Area2D CollisionDecisionArea;
-        Node parent;
-        public override void _Ready()
-        {
-            parent = GetParent();
+        
+        public Node Entity {get;set;} = null;
 
+        public bool IsRemove()
+        {
+            return false;
+        }
+
+        public void _InitListener()
+        {
             //从组件本体搜索Area
             foreach(Node node in GetChildren()) {
                 if(node is Area2D) {
@@ -24,8 +29,8 @@ namespace Box.Components {
             if(CollisionDecisionArea == null){
                 CollisionDecisionArea = new Area2D();
                 //从父节点搜索（需要父节点继承自PhysicsBody2D）
-                if(parent is PhysicsBody2D) {
-                    foreach(Node node in parent.GetChildren()) {
+                if(Entity is PhysicsBody2D) {
+                    foreach(Node node in Entity.GetChildren()) {
                         if(node is CollisionShape2D){
                             CollisionShape2D node_shape = node as CollisionShape2D;
                             CollisionShape2D shape = new CollisionShape2D();
@@ -56,14 +61,14 @@ namespace Box.Components {
         }
 
         public void _BodyEntered(Node body) {
-            if(body != parent) {
-                Game.Instance.EventManager.RequestEvent(nameof(CollisionEvent),parent,body,true);
+            if(body != Entity) {
+                Game.Instance.EventManager.RequestEvent(nameof(CollisionEvent),Entity,body,true);
             }
         }
 
         public void _BodyExited(Node body) {
-            if(body != parent) {
-                Game.Instance.EventManager.RequestEvent(nameof(CollisionEvent),parent,body,false);
+            if(body != Entity) {
+                Game.Instance.EventManager.RequestEvent(nameof(CollisionEvent),Entity,body,false);
             }
         }
 

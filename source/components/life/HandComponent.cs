@@ -33,12 +33,16 @@ namespace Box.Components
         protected float attack_timer = 0;
 
         public InterplayEventListener InterplayEventListener;
+        public EventListeningComponent EventListeningComponent;
 
         protected Node parent;
         public override void _Ready()
         {
             parent = GetParent();
-            InterplayEventListener = parent.GetNodeOrNull<InterplayEventListener>(nameof(InterplayEventListener));
+
+            EventListeningComponent = parent.GetNodeOrNull<EventListeningComponent>(nameof(EventListeningComponent));
+
+            InterplayEventListener = EventListeningComponent.GetListener<InterplayEventListener>();
 
             InterplayEventListener.Connect(nameof(InterplayEventListener.emit_interplay),this,nameof(_EmitInterplay));
             InterplayEventListener.Connect(nameof(InterplayEventListener.receive_interplay),this,nameof(_ReceiveInterplay));
@@ -84,7 +88,7 @@ namespace Box.Components
                     HPComponent hp = receive_object.GetNodeOrNull<HPComponent>(nameof(HPComponent));
                     if(hp != null) {
                         if(tool is HandComponent) {
-                            EmitSignal(nameof(emit_attack),receive_object,null);
+                            EmitSignal(nameof(emit_attack),receive_object,this);
                             hp.HP -= AttackValue;
                         }
                         else {

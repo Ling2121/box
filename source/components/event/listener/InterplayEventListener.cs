@@ -6,7 +6,7 @@ using Box.Itmes;
 
 namespace Box.Components {
     [ClassName(nameof(InterplayEventListener))]
-    public class InterplayEventListener : Node2D {
+    public class InterplayEventListener : Node2D,IEventListener {
         public static InterplayEventListener Select;
 
         [Signal]
@@ -16,11 +16,16 @@ namespace Box.Components {
 
         [Export]
         public Area2D ClickDecisionArea;
-        Node parent;
-        public override void _Ready()
-        {
-            parent = GetParent();
 
+        public Node Entity {get;set;} = null;
+
+        public bool IsRemove()
+        {
+            return false;
+        }
+
+        public void _InitListener()
+        {
             if(ClickDecisionArea == null){
                 //从组件本体搜索Area
                 foreach(Node node in GetChildren()) {
@@ -31,8 +36,8 @@ namespace Box.Components {
                 if(ClickDecisionArea == null){
                     ClickDecisionArea = new Area2D();
                     //从父节点搜索（需要父节点继承自PhysicsBody2D）
-                    if(parent is PhysicsBody2D) {
-                        foreach(Node node in parent.GetChildren()) {
+                    if(Entity is PhysicsBody2D) {
+                        foreach(Node node in Entity.GetChildren()) {
                             if(node is CollisionShape2D){
                                 CollisionShape2D node_shape = node as CollisionShape2D;
                                 CollisionShape2D shape = new CollisionShape2D();
@@ -79,7 +84,7 @@ namespace Box.Components {
         }
 
         public void EmitInterplayEvent(InterplayType interplay_type,Node receive_object,Node item) {
-            Game.Instance.EventManager.RequestEvent(nameof(InterplayEvent),interplay_type,parent,receive_object,item);
+            Game.Instance.EventManager.RequestEvent(nameof(InterplayEvent),interplay_type,Entity,receive_object,item);
         }
     }
 }

@@ -20,7 +20,9 @@ namespace Box.Entities.Lifes {
 
         public override void _Ready()
         {
-            CollisionEventListener = GetNode<CollisionEventListener>(nameof(CollisionEventListener));
+            EventListeningComponent event_listening = GetNode<EventListeningComponent>(nameof(EventListeningComponent));
+
+            CollisionEventListener = event_listening.GetListener<CollisionEventListener>();
             HPComponent = GetNode<HPComponent>(nameof(HPComponent));
             HandComponent = GetNode<HandComponent>(nameof(HandComponent));
             
@@ -42,7 +44,7 @@ namespace Box.Entities.Lifes {
             hurt_table.Remove(collision);
         }
 
-        public void _Attack(Node receive_object) {
+        public void _Attack(Node receive_object,Node tool) {
             GD.Print($"尖刺人 打了{receive_object.Name}一下");
         }
 
