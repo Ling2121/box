@@ -1,0 +1,219 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://scene/process_tree_editor/ScriptEditor.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scene/process_tree_editor/ProcessTreeEditor.cs" type="Script" id=2]
+[ext_resource path="res://scene/process_tree_editor/ScriptEditor.cs" type="Script" id=3]
+[ext_resource path="res://scene/process_tree_editor/PlaceMenu.cs" type="Script" id=6]
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.156863, 0.141176, 0.176471, 1 )
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.156863, 0.141176, 0.176471, 1 )
+
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 0.188235, 0.172549, 0.215686, 1 )
+border_width_top = 2
+border_color = Color( 0.156863, 0.141176, 0.176471, 1 )
+
+[sub_resource type="StyleBoxFlat" id=5]
+bg_color = Color( 0.156863, 0.141176, 0.176471, 1 )
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.00392157, 0.00392157, 0.0313726, 0.623529 )
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 2 )
+
+[node name="Panel" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_styles/panel = SubResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/separation = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_right = 1024.0
+margin_bottom = 23.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.04
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/HBoxContainer"]
+margin_right = 1024.0
+margin_bottom = 23.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_styles/panel = SubResource( 1 )
+
+[node name="MenuContainer" type="GridContainer" parent="VBoxContainer/HBoxContainer/PanelContainer"]
+margin_right = 1024.0
+margin_bottom = 23.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/hseparation = 0
+columns = 2
+
+[node name="FileMenu" type="MenuButton" parent="VBoxContainer/HBoxContainer/PanelContainer/MenuContainer"]
+margin_right = 35.0
+margin_bottom = 23.0
+size_flags_vertical = 3
+custom_colors/font_color_hover = Color( 0.513726, 0.513726, 0.513726, 1 )
+text = "File"
+items = [ "Open", null, 0, false, false, 0, 0, null, "", false, "Save", null, 0, false, false, 1, 0, null, "", false, "Build", null, 0, false, false, 2, 0, null, "", false ]
+
+[node name="OptionsMenu" type="MenuButton" parent="VBoxContainer/HBoxContainer/PanelContainer/MenuContainer"]
+margin_left = 35.0
+margin_right = 98.0
+margin_bottom = 23.0
+size_flags_vertical = 3
+custom_colors/font_color_hover = Color( 0.513726, 0.513726, 0.513726, 1 )
+text = "Options"
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer"]
+margin_top = 23.0
+margin_right = 1024.0
+margin_bottom = 600.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+collapsed = true
+
+[node name="Editor" type="GraphEdit" parent="VBoxContainer/HSplitContainer"]
+margin_right = 847.0
+margin_bottom = 577.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+right_disconnects = true
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/HSplitContainer"]
+margin_left = 859.0
+margin_right = 1024.0
+margin_bottom = 577.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.2
+custom_styles/panel = SubResource( 4 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/PanelContainer"]
+margin_top = 2.0
+margin_right = 165.0
+margin_bottom = 577.0
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/PanelContainer/VBoxContainer"]
+margin_right = 165.0
+margin_bottom = 14.0
+custom_styles/normal = SubResource( 5 )
+text = "Properties"
+align = 1
+valign = 1
+
+[node name="Properties" type="GridContainer" parent="VBoxContainer/HSplitContainer/PanelContainer/VBoxContainer"]
+margin_top = 18.0
+margin_right = 165.0
+margin_bottom = 575.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MaskPanel" type="Panel" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_styles/panel = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ScriptEditor" parent="." instance=ExtResource( 1 )]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -366.0
+margin_top = -214.5
+margin_right = 366.0
+margin_bottom = 214.5
+size_flags_horizontal = 1
+size_flags_vertical = 1
+size_flags_stretch_ratio = 1.0
+script = ExtResource( 3 )
+
+[node name="PlaceMenu" type="PopupMenu" parent="."]
+margin_left = 294.0
+margin_top = 174.0
+margin_right = 429.0
+margin_bottom = 208.0
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SaveWindow" type="FileDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -296.0
+margin_top = -178.0
+margin_right = 296.0
+margin_bottom = 178.0
+window_title = "保存文件"
+access = 2
+filters = PoolStringArray( "*.ptree" )
+show_hidden_files = true
+current_dir = "/Development/Projects/Godot/Box"
+current_path = "/Development/Projects/Godot/Box/"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReadWindow" type="FileDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -296.0
+margin_top = -178.0
+margin_right = 296.0
+margin_bottom = 178.0
+window_title = "打开文件"
+mode = 0
+access = 2
+filters = PoolStringArray( ".ptree" )
+show_hidden_files = true
+current_dir = "/Development/Projects/Godot/Box"
+current_path = "/Development/Projects/Godot/Box/"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BuildWindow" type="FileDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -296.0
+margin_top = -178.0
+margin_right = 296.0
+margin_bottom = 178.0
+window_title = "保存文件"
+access = 2
+filters = PoolStringArray( "*.cs" )
+show_hidden_files = true
+current_dir = "/Development/Projects/Godot/Box"
+current_path = "/Development/Projects/Godot/Box/"
+__meta__ = {
+"_edit_use_anchors_": false
+}

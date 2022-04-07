@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scene/process_tree_editor/LineTextPropertiy.cs" type="Script" id=1]
+
+[sub_resource type="StyleBoxFlat" id=6]
+bg_color = Color( 0.227451, 0.215686, 0.25098, 1 )
+border_width_left = 5
+border_color = Color( 0.227451, 0.215686, 0.25098, 1 )
+corner_radius_top_left = 10
+
+[node name="LineTextPropertiy" type="HBoxContainer"]
+margin_right = 165.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 0, 24 )
+size_flags_horizontal = 3
+size_flags_vertical = 0
+custom_constants/separation = 0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_right = 90.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.55
+custom_colors/font_color = Color( 0.827451, 0.784314, 0.784314, 1 )
+custom_styles/normal = SubResource( 6 )
+text = "Key"
+valign = 1
+
+[node name="LineEdit" type="LineEdit" parent="."]
+margin_left = 90.0
+margin_right = 165.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.45
+custom_colors/font_color = Color( 0.827451, 0.784314, 0.784314, 1 )
+text = "value"

@@ -47,9 +47,9 @@ namespace Box.Components {
                                 HandComponent.EmitUse(InterplayEventListener.Select.Entity);
                             }
                         } else {
-                            // if(interplay_type == InterplayType.Interplay) {
-                            //     HandComponent.EmitUse();
-                            // }
+                            if(interplay_type == InterplayType.Interplay) {
+                                HandComponent.EmitUse(GetParent());
+                            }
                         }
                     }
                 }

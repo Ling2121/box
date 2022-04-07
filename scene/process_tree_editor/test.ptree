@@ -1,0 +1,57 @@
+{
+    "@@204": {
+        "type": "Root",
+        "connects": [
+            [
+                "@@204",
+                0,
+                "@@218",
+                0
+            ]
+        ],
+        "properties": {}
+    },
+    "@@218": {
+        "type": "Condition",
+        "connects": [
+            [
+                "@@218",
+                0,
+                "@@233",
+                0
+            ],
+            [
+                "@@218",
+                1,
+                "@@237",
+                0
+            ]
+        ],
+        "properties": {
+            "Condition": [
+                1,
+                ""
+            ]
+        }
+    },
+    "@@233": {
+        "type": "Execute",
+        "connects": [],
+        "properties": {
+            "Execute": [
+                1,
+                ""
+            ]
+        }
+    },
+    "@@237": {
+        "type": "Execute",
+        "connects": [],
+        "properties": {
+            "Execute": [
+                1,
+                ""
+            ]
+        }
+    },
+}
