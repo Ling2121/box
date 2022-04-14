@@ -152,7 +152,6 @@ __meta__ = {
 }
 
 [node name="ScriptEditor" parent="." instance=ExtResource( 1 )]
-visible = false
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -189,8 +188,8 @@ window_title = "保存文件"
 access = 2
 filters = PoolStringArray( "*.ptree" )
 show_hidden_files = true
-current_dir = "/Development/Projects/Godot/Box"
-current_path = "/Development/Projects/Godot/Box/"
+current_dir = "/Project/godot/box"
+current_path = "/Project/godot/box/"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -209,8 +208,8 @@ mode = 0
 access = 2
 filters = PoolStringArray( ".ptree" )
 show_hidden_files = true
-current_dir = "/Development/Projects/Godot/Box"
-current_path = "/Development/Projects/Godot/Box/"
+current_dir = "/Project/godot/box"
+current_path = "/Project/godot/box/"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -228,8 +227,8 @@ window_title = "保存文件"
 access = 2
 filters = PoolStringArray( "*.cs" )
 show_hidden_files = true
-current_dir = "/Development/Projects/Godot/Box"
-current_path = "/Development/Projects/Godot/Box/"
+current_dir = "/Project/godot/box"
+current_path = "/Project/godot/box/"
 __meta__ = {
 "_edit_use_anchors_": false
 }

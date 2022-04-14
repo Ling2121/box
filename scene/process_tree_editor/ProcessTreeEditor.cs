@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 using System.Linq;
 using System.Reflection;
 using Godot;
@@ -55,6 +54,7 @@ namespace Box.Scene.ProcessTreeEditor {
             TreeNameEdit = GetNode<LineEdit>("VBoxContainer/HSplitContainer/PanelContainer/VBoxContainer/TreeName");
 
             Root = CreateNode("Root");
+            Root.Name = "Root";
             Editor.AddChild(Root);
 
             Editor.Connect("connection_request",this,nameof(_ConnectionRequest));
@@ -327,8 +327,29 @@ namespace Box.Scene.ProcessTreeEditor {
             if(file.Open(file_name,File.ModeFlags.Read) == Error.Ok) {
                 code = file.GetAsText();
                 file.Close();
+
+                File backup_file = new File();
+                if(backup_file.Open($"{file_name}.backup",File.ModeFlags.WriteRead) == Error.Ok) {
+                    backup_file.StoreString(code);
+
+                    backup_file.Close();
+                }
             }
 
+
+            // using Godot;
+            // using System;
+
+            // public class ExportTest : Node {
+
+            //     public override void _Ready()
+            //     {
+            //         /**[ProcessTreeBuild].Start**/
+            //         /**[ProcessTreeBuild].End**/
+            //     }
+
+            // }
+    
 
             string start_str = "/**[ProcessTreeBuild].Start**/";
             string end_str = "/**[ProcessTreeBuild].End**/";
@@ -352,11 +373,70 @@ namespace Box.Scene.ProcessTreeEditor {
                     string tree_name = TreeNameEdit.Text;
 
 
+
+
                     file.StoreString(up_str);
 
-                    file.StoreString($"\n{space}var {tree_name} = new {nameof(ProcessTree)}();");
+                    file.StoreString($"\n{space}var {tree_name} = new {nameof(ProcessTree)}();\n\n");
                     
-                    
+                    var var_names = new Dictionary<string,string>();
+                    var var_base_name = "__ptnode_";
+                    var var_name_id = 0;
+
+                    file.StoreString("\n");
+                    //创建节点
+                    foreach(Node item in Editor.GetChildren()){
+                        if(item is ProcessTreeEditorNode) {
+                            var node = item as ProcessTreeEditorNode;
+                            var var_name = $"{var_base_name}{var_name_id}";
+                            var_names[node.Name] = var_name;
+                            file.StoreString($"{space}var {var_name} = new Box.ProcessTreeNodes.{node.TypeName}();\n");
+                            var_name_id++;
+                        }
+                    }
+                    file.StoreString($"{space}{tree_name}.Root = {var_names["Root"]};\n");
+                    file.StoreString("\n");
+                    //配置节点属性
+                    foreach(Node item in Editor.GetChildren()){
+                        if(item is ProcessTreeEditorNode) {
+                            var node = item as ProcessTreeEditorNode;
+                            var var_name = var_names[node.Name];
+                            file.StoreString($"{space}{var_name}.Tree = {tree_name};\n");
+                            if(node.Properties.Count > 0) {
+                                foreach(var propertiy in node.Properties){
+                                    if(propertiy.Value.Value.String != "") {
+                                        string str = propertiy.Value.Value.String;
+                                        int insert_index = str.IndexOf('\n',0);
+                                        while (insert_index != -1)
+                                        {
+                                            insert_index ++;
+                                            str = str.Insert(insert_index,space);
+                                            insert_index = str.IndexOf('\n',insert_index + 1);
+                                        }
+                                        file.StoreString($"{space}{var_name}._Setting(\"{propertiy.Key}\",{str});\n");
+                                    }
+                                }
+                            }
+                            file.StoreString($"{space}{var_name}._Ready();\n");
+                        }
+                    }
+                    //节点连接
+                     foreach(Node item in Editor.GetChildren()){
+                        if(item is ProcessTreeEditorNode) {
+                            var node = item as ProcessTreeEditorNode;
+                            var var_name = var_names[node.Name];
+                            foreach(var connect in node.OutputConnects) {
+                                var out_port_name = node.GetPort(connect.Item2,false).Name;
+                                
+                                var input_node_name = connect.Item3;
+                                var input_node = Editor.GetNode<ProcessTreeEditorNode>(input_node_name);
+                                var input_port = input_node.GetPort(connect.Item4,true);
+
+                                var input_var_name = var_names[input_node_name];
+                                file.StoreString($"{space}{var_name}.Connect(\"{out_port_name}\",{input_var_name},\"{input_port.Name}\");\n");
+                            }
+                        }
+                     }
 
                     file.StoreString($"{space}{down_str}");
                     file.Close();

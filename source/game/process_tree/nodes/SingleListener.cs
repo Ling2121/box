@@ -48,7 +48,7 @@ namespace Box.ProcessTreeNodes {
         public override Dictionary<string, ProcessTreeNodePropertyType> _Properties()
         {
             return new Dictionary<string, ProcessTreeNodePropertyType>{
-                {"GetSignalObject",ProcessTreeNodePropertyType.Script},
+                {"SignalObject",ProcessTreeNodePropertyType.Script},
                 {"SignalName",ProcessTreeNodePropertyType.Text}
             };
         }
@@ -56,7 +56,7 @@ namespace Box.ProcessTreeNodes {
         public override void _Ready(params object[] args) {
             if(args.Length > 1) {
                 if(args[0] is Func<Godot.Object>) {
-                    _Setting("GetSignalObject",args[0]);
+                    _Setting("SignalObject",args[0]);
                 }
                 else if (args[0] is Godot.Object) {
                     _Setting("SignalObject",args[0]);
@@ -75,11 +75,12 @@ namespace Box.ProcessTreeNodes {
             OutputLow("Q0");
         }
         public override void _Setting(string key,object value){
-            if(key == "GetSignalObject") {
-                SignalObject = (value as Func<Godot.Object>)();
-            }
             if(key == "SignalObject") {
-                SignalObject= value as Godot.Object;
+                if(value is Func<Godot.Object>) {
+                    SignalObject = (value as Func<Godot.Object>)();
+                } else {
+                    SignalObject = value as Godot.Object;
+                }
             }
             if(key == "SignalName") {
                 SignalName = value as string;
