@@ -58,6 +58,8 @@ namespace Box {
 
         public void CellBindBlock(SandboxLayer layer,IBlock block,int x,int y) {
             int index = y * Sandbox.REGION_SIZE + x;
+            block.X = x;
+            block.Y = y;
             CellBindBlocks[index] = block;
         }
 

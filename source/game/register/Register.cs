@@ -20,6 +20,7 @@ namespace Box {
         protected Dictionary<string,Type> entities = new Dictionary<string, Type>();
         protected Dictionary<string,IBiome> biomes = new Dictionary<string, IBiome>();
         protected Dictionary<string,IEvent> events = new Dictionary<string, IEvent>();
+        protected Dictionary<string,string> tile_bind_blocks = new Dictionary<string, string>();
 
         public List<string> BiomeNameList = new List<string>();
 
@@ -72,6 +73,10 @@ namespace Box {
                         }break;
                         case RegisterType.Item : {
                             items[reg_name] = type;
+                            var bind_tile = type.GetCustomAttribute<BindTileAttribute>();
+                            if(bind_tile != null) {
+                                tile_bind_blocks[bind_tile.TileName] = reg_name;
+                            }
                         }break;
                         case RegisterType.Biome : {
                             IBiome biome = (IBiome)Activator.CreateInstance(type);
@@ -99,18 +104,22 @@ namespace Box {
         }
 
         public Node Create(RegisterType reg_type,string name) {
-            if(!entities.ContainsKey(name)) return null;
-            Type type = entities[name];
+            Type type = null;
             switch(reg_type) {
                 case RegisterType.Entity : {
+                    if(!entities.ContainsKey(name)) return null;
                     type = entities[name];
                 }break;
                 case RegisterType.Block : {
+                    if(!blocks.ContainsKey(name)) return null;
                     type = blocks[name];
                 }break;
                 case RegisterType.Item : {
+                    if(!items.ContainsKey(name)) return null;
                     type = items[name];
                 }break;
+
+                default:return null;
 
             }
             IEntity entity = (IEntity)Activator.CreateInstance(type);
@@ -143,6 +152,11 @@ namespace Box {
         public IEvent GetEvent(string name) {
             if(!events.ContainsKey(name)) return null;
             return events[name];
+        }
+
+        public Node CreateTileBindBlock(string tile_name) {
+            if(!tile_bind_blocks.ContainsKey(tile_name)) return null;
+            return Create(RegisterType.Block,tile_bind_blocks[tile_name]);
         }
     }
 }
