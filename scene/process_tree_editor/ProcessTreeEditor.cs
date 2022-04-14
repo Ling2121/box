@@ -18,6 +18,7 @@ namespace Box.Scene.ProcessTreeEditor {
         public FileDialog ReadWindow;
         public FileDialog BuildWindow;
         public MenuButton FileMenu;
+        public LineEdit TreeNameEdit;
         public ProcessTreeEditorNode SelectNode;
         public Dictionary<ProcessTreeEditorNode,ProcessTreeEditorNode> SelectNodes = new Dictionary<ProcessTreeEditorNode, ProcessTreeEditorNode>(); 
         public Node Properties;
@@ -51,7 +52,7 @@ namespace Box.Scene.ProcessTreeEditor {
             ReadWindow = GetNode<FileDialog>("ReadWindow");
             BuildWindow = GetNode<FileDialog>("BuildWindow");
             FileMenu = GetNode<MenuButton>("VBoxContainer/HBoxContainer/PanelContainer/MenuContainer/FileMenu");
-            
+            TreeNameEdit = GetNode<LineEdit>("VBoxContainer/HSplitContainer/PanelContainer/VBoxContainer/TreeName");
 
             Root = CreateNode("Root");
             Editor.AddChild(Root);
@@ -289,6 +290,36 @@ namespace Box.Scene.ProcessTreeEditor {
 
         }
 
+        protected string GenSpace(int layer) {
+            string str = "";
+            for(int i = 0;i<layer;i++){
+                str += "    ";
+            }
+            return str;
+        }
+
+        protected void BuildNode(File file,ProcessTreeEditorNode node,string space,int layer) {
+            string add_space = GenSpace(layer);
+            file.StoreString($"{space}{add_space}.Enter()");
+            foreach(var item in node.OutputConnects) {
+                ProcessTreeEditorNode input_node = Editor.GetNode<ProcessTreeEditorNode>(item.Item3);
+                ProcessTreeNodePort output_port = node.GetLayer(item.Item2).Output;
+                ProcessTreeNodePort input_port = input_node.GetLayer(item.Item4).Input;
+                file.StoreString($"{space}{add_space}.Node({node.TypeName},{output_port.Name},{input_port.Name})");
+                if(input_node.Properties.Count > 0) {
+                    string add_space2 = GenSpace(layer + 1);
+                    file.StoreString($"{space}{add_space}.Enter()");
+                    foreach(var propertiy in input_node.Properties) {
+                        file.StoreString($"{space}{add_space2}.Setting({propertiy.Key},{propertiy.Value.Value.String})");
+                    }
+                    file.StoreString($"{space}{add_space}.Exit()");
+                }
+                file.StoreString($"{space}{add_space}.Ready()");
+                BuildNode(file,input_node,space,layer + 1);
+            }
+            file.StoreString($"{space}{add_space}.Exit()");
+        }
+
         public void Build(string file_name) {
             File file = new File();
             string code = "";
@@ -317,11 +348,16 @@ namespace Box.Scene.ProcessTreeEditor {
 
 
                     string up_str = code.Substr(0,start_p + start_str.Length);
-                    string down_str = code.Substr(end_p,len);
-                    string insert_str = $"\n{space}GD.Print(\"成功插入\");\n{space}GD.Print(\"哦耶\");\n";
-                    
+                    string down_str = code.Substr(end_p,len);    
+                    string tree_name = TreeNameEdit.Text;
+
+
                     file.StoreString(up_str);
-                    file.StoreString(insert_str);
+
+                    file.StoreString($"\n{space}var {tree_name} = new {nameof(ProcessTree)}();");
+                    
+                    
+
                     file.StoreString($"{space}{down_str}");
                     file.Close();
                 }

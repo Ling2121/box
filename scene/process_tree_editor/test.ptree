@@ -1,56 +1,56 @@
 {
-    "@@204": {
+    "@@289": {
         "type": "Root",
         "connects": [
             [
-                "@@204",
+                "@@289",
                 0,
-                "@@218",
+                "@@296",
                 0
             ]
         ],
         "properties": {}
     },
-    "@@218": {
+    "@@296": {
         "type": "Condition",
         "connects": [
             [
-                "@@218",
+                "@@296",
                 0,
-                "@@233",
+                "@@300",
                 0
             ],
             [
-                "@@218",
-                1,
-                "@@237",
+                "@@296",
+                0,
+                "@@311",
                 0
             ]
         ],
         "properties": {
             "Condition": [
                 1,
-                ""
+                "return Name == \"Player\""
             ]
         }
     },
-    "@@233": {
+    "@@300": {
         "type": "Execute",
         "connects": [],
         "properties": {
             "Execute": [
                 1,
-                ""
+                "GD.Print(\"Player\");"
             ]
         }
     },
-    "@@237": {
+    "@@311": {
         "type": "Execute",
         "connects": [],
         "properties": {
             "Execute": [
                 1,
-                ""
+                "GD.Print(\"Other\");"
             ]
         }
     },

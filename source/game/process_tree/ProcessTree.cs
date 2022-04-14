@@ -44,6 +44,7 @@ namespace Box {
 
         public ProcessTreeConstructor Ready(params object[] args) {
             CurrentProcess._Ready(args);
+            
             return this;
         }
 
@@ -69,7 +70,7 @@ namespace Box {
         public ProcessTreeConstructor Constructor;
 
         public ProcessTree() {
-            Constructor = new ProcessTreeConstructor(this);
+            Constructor = new ProcessTreeConstructor(this);               
         }
 
         public void Start() {

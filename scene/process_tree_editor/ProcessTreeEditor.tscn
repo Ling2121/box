@@ -111,16 +111,32 @@ margin_top = 2.0
 margin_right = 165.0
 margin_bottom = 577.0
 
-[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/PanelContainer/VBoxContainer"]
+[node name="Label2" type="Label" parent="VBoxContainer/HSplitContainer/PanelContainer/VBoxContainer"]
 margin_right = 165.0
 margin_bottom = 14.0
+custom_styles/normal = SubResource( 5 )
+text = "Tree Name"
+align = 1
+valign = 1
+
+[node name="TreeName" type="LineEdit" parent="VBoxContainer/HSplitContainer/PanelContainer/VBoxContainer"]
+margin_top = 18.0
+margin_right = 165.0
+margin_bottom = 42.0
+text = "Tree"
+align = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/PanelContainer/VBoxContainer"]
+margin_top = 46.0
+margin_right = 165.0
+margin_bottom = 60.0
 custom_styles/normal = SubResource( 5 )
 text = "Properties"
 align = 1
 valign = 1
 
 [node name="Properties" type="GridContainer" parent="VBoxContainer/HSplitContainer/PanelContainer/VBoxContainer"]
-margin_top = 18.0
+margin_top = 64.0
 margin_right = 165.0
 margin_bottom = 575.0
 size_flags_horizontal = 3
