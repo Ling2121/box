@@ -11,7 +11,7 @@ namespace Box {
         NotLoad,
     }
 
-    public class SandboxRegion : Node2D,IStorage {
+    public class SandboxRegion : Node2D,IStorage,ISandboxRegion {
         public int X {get;protected set;}
         public int Y {get;protected set;}
         public int TileOriginX {get;protected set;}
@@ -21,10 +21,10 @@ namespace Box {
         public SandboxRegionStatus Status = SandboxRegionStatus.NotLoad;
         public long UnloadTimestamp = 0;
         public int IndexCount = 0;
-        public Dictionary<Node,Node> Objects {get;protected set;} = new Dictionary<Node, Node>();
+        public Dictionary<Node,Node> Objects {get;} = new Dictionary<Node, Node>();
     
-        public Dictionary<SandboxLayer,int[,]> Layers = new Dictionary<SandboxLayer, int[,]>();
-        public Dictionary<int,IBlock> CellBindBlocks = new Dictionary<int, IBlock>();
+        public Dictionary<SandboxLayer,int[,]> Layers {get;} = new Dictionary<SandboxLayer, int[,]>();
+        public Dictionary<int,IBlock> CellBindBlocks {get;} = new Dictionary<int, IBlock>();
 
         public NumberIndexPool IndexPool = new NumberIndexPool();
 
@@ -52,8 +52,9 @@ namespace Box {
             }
         }
 
-        public void GetCellBlockBind(int x,int y) {
-
+        public IBlock GetCellBlockBind(int x,int y) {
+            int index = y * Sandbox.REGION_SIZE + x;
+            return CellBindBlocks[index];
         }
 
         public void CellBindBlock(SandboxLayer layer,IBlock block,int x,int y) {
@@ -63,7 +64,12 @@ namespace Box {
             CellBindBlocks[index] = block;
         }
 
-        public void SetCell(SandboxLayer layer,int x,int y,string tile_name) {
+        public void CellUnbindBlock(SandboxLayer layer,int x,int y) {
+             int index = y * Sandbox.REGION_SIZE + x;
+
+        }
+
+        protected void SetCell(SandboxLayer layer,int x,int y,string tile_name) {
             if(x < 0 || x >= Sandbox.REGION_SIZE || y < 0 || y >= Sandbox.REGION_SIZE) return;
             int[,] lay = Layers[layer];
             int wx = TileOriginX + x;
@@ -74,10 +80,15 @@ namespace Box {
                 lay[x,y] = id;
                 int tile_id = map.TileSet.FindTileByName(tile_name);
                 map.CallDeferred("set_cell",wx,wy,tile_id);
+                Layers[layer][x,y] = tile_id;
+                Sandbox.CellBindBlock(layer,x,y);
             } else {
                 lay[x,y] = -1;
                 map.CallDeferred("set_cell",wx,wy,-1);
+                Layers[layer][x,y] = -1;
+                Sandbox.CellBindBlock(layer,x,y);
             }
+            
         }
 
         public void StorageWrite(IStorageFile file) {

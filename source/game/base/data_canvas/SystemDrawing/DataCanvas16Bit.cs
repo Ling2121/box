@@ -5,7 +5,6 @@ using GD = Godot.GD;
 
 namespace Box.DataCanvas.SystemDrawing {
     public class DataCanvas16Bit : IDataCanvas<ushort> {
-
         // B G R A
         protected ushort ColorToData(Color color) {
             ushort value =  (ushort)color.R;

@@ -22,7 +22,7 @@ namespace Box.Components {
         {
             (int rx,int ry) = Sandbox.WorldToRegion(parent.Position);
             if(rx != old_region_x || ry != old_region_y) {
-                SandboxRegion new_region = game.Sandbox.GetRegion(rx,ry);
+                SandboxRegion new_region = game.Sandbox.GetRegion<SandboxRegion>(rx,ry);
                 if(region != null) {
                     region.Objects.Remove(parent);
                 }

@@ -8,7 +8,15 @@ namespace Box {
     public interface IBlock {
         int X {get;set;}
         int Y {get;set;}
+        //耐久
         int Durable {get;set;}
+        //硬度
         int Hardness {get;set;}
+        //是否加入到场景中进行更新
+        bool IsAddToSandbox();
+        //绑定tile时触发
+        void _CellBind();
+        //接触绑定tile时触发
+        void _CellUnbind();
     }
 }

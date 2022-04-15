@@ -26,8 +26,6 @@ namespace Box.Components {
         protected void Move(Vector2 vec,float delta) {
             if(move_type == MoveType.KinematicBody2D) {
                 kinematic_body.MoveAndSlide(vec);
-
-                
             } 
             else if(move_type == MoveType.Node2D) {
                 node_2d.Position += vec * delta;
@@ -46,7 +44,7 @@ namespace Box.Components {
             }
         }
 
-        public override void _PhysicsProcess(float delta)
+        public override void _Process(float delta)
         {
             if(Direction != Vector2.Zero) {
                 Move(Direction,delta);
