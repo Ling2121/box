@@ -14,7 +14,7 @@ namespace Box {
         int Height {get;}
         Dictionary<int,Dictionary<int,ISandboxRegion>> Regions {get;}
         void SetCell(SandboxLayer layer,int x,int y,string tile_name);
-        void CellBindBlock(SandboxLayer layer,int x,int y);
+        void CellBindBlock(SandboxLayer layer,int x,int y,string tile_name);
         IBlock GetCellBindBlock(SandboxLayer layer,int x,int y);
         ISandboxRegion GetRegion(int rx,int ry);
         T GetRegion<T>(int rx,int ry) where T : ISandboxRegion;

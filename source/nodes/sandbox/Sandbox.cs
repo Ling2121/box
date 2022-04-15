@@ -161,13 +161,13 @@ namespace Box {
             GD.Print("区块卸载线程关闭");
         }
 
-        public (SandboxRegion,int,int) CellOfLocal(int world_x,int world_y) {
-            int region_x = Mathf.FloorToInt(world_x / REGION_SIZE);
-            int region_y = Mathf.FloorToInt(world_y / REGION_SIZE);
+        public (SandboxRegion,int,int) CellOfLocal(int world_cx,int world_cy) {
+            //                              (float) <--这玩意真滴太坑了
+            int region_x = Mathf.FloorToInt((float)world_cx / REGION_SIZE);
+            int region_y = Mathf.FloorToInt((float)world_cy / REGION_SIZE);
             SandboxRegion region = GetRegion<SandboxRegion>(region_x,region_y);
-            int region_cell_x_local = world_x - region.TileOriginX;
-            int region_cell_y_local = world_y - region.TileOriginY;
-
+            int region_cell_x_local = world_cx - region.TileOriginX;
+            int region_cell_y_local = world_cy - region.TileOriginY;
             return (region,region_cell_x_local,region_cell_y_local);
         }
 
@@ -178,7 +178,7 @@ namespace Box {
             
             map.CallDeferred("set_cell",x,y,tile_id);
             region.Layers[layer][region_cell_x,region_cell_y] = region.IndexPool.GetIndex(tile_name);
-            CellBindBlock(layer,x,y);
+            CellBindBlock(layer,x,y,tile_name);
         }
 
         public IBlock GetCellBindBlock(SandboxLayer layer,int x,int y) {
@@ -187,29 +187,26 @@ namespace Box {
             return region.CellBindBlocks[index];
         }
 
-        public void CellBindBlock(SandboxLayer layer,int x,int y) {
+        public void CellBindBlock(SandboxLayer layer,int x,int y,string tile_name) {
             (SandboxRegion region,int region_cell_x,int region_cell_y) = CellOfLocal(x,y);
             TileMap map = LayerTileMaps[layer];
-
-            int cell = map.GetCell(x,y);
-            if(cell == TileMap.InvalidCell) return;
-            string name = map.TileSet.TileGetName(cell);
             int index = region_cell_y * Sandbox.REGION_SIZE + region_cell_x;
             
             if(region.CellBindBlocks.ContainsKey(index)) {
                 IBlock old_block = region.CellBindBlocks[index];
                 if(old_block.IsAddToSandbox()) {
-                    RemoveChild(old_block as Node);
+                    (old_block as Node).Free();
                 }
                 old_block._CellUnbind();
                 region.CellBindBlocks.Remove(index);
             }
-            Node block_node =  Register.Instance.CreateTileBindBlock(name);
+            Node block_node =  Register.Instance.CreateTileBindBlock(tile_name);
             if(block_node != null) {
+
                 IBlock block = block_node as IBlock;
+                block.X = x;
+                block.Y = y;
                 if(block.IsAddToSandbox()){
-                    block.X = x;
-                    block.Y = y;
                     AddChild(block_node);
                 }
                 region.CellBindBlocks[index] = block;

@@ -81,12 +81,12 @@ namespace Box {
                 int tile_id = map.TileSet.FindTileByName(tile_name);
                 map.CallDeferred("set_cell",wx,wy,tile_id);
                 Layers[layer][x,y] = tile_id;
-                Sandbox.CellBindBlock(layer,x,y);
+                Sandbox.CellBindBlock(layer,x,y,tile_name);
             } else {
                 lay[x,y] = -1;
                 map.CallDeferred("set_cell",wx,wy,-1);
                 Layers[layer][x,y] = -1;
-                Sandbox.CellBindBlock(layer,x,y);
+                Sandbox.CellBindBlock(layer,x,y,tile_name);
             }
             
         }

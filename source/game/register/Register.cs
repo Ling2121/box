@@ -70,13 +70,13 @@ namespace Box {
                         }break;
                         case RegisterType.Block : {
                             blocks[reg_name] = type;
-                        }break;
-                        case RegisterType.Item : {
-                            items[reg_name] = type;
                             var bind_tile = type.GetCustomAttribute<BindTileAttribute>();
                             if(bind_tile != null) {
                                 tile_bind_blocks[bind_tile.TileName] = reg_name;
                             }
+                        }break;
+                        case RegisterType.Item : {
+                            items[reg_name] = type;
                         }break;
                         case RegisterType.Biome : {
                             IBiome biome = (IBiome)Activator.CreateInstance(type);
@@ -122,14 +122,8 @@ namespace Box {
                 default:return null;
 
             }
-            IEntity entity = (IEntity)Activator.CreateInstance(type);
             Node node = TryCreatePackedScene(type);
-            if(node == null) {
-                if(!(entity is Node)) throw new RegisterTypeDefineError(type);
-                node = (Node)entity;
-            }
-
-            return node;
+            return node == null?(Node)Activator.CreateInstance(type):node;
         }
 
         public Node CreateEntity(string name) {
