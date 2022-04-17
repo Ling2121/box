@@ -3,7 +3,7 @@
 [ext_resource path="res://source/components/properties/HPComponent.cs" type="Script" id=1]
 [ext_resource path="res://source/components/event/EventListeningComponent.cs" type="Script" id=2]
 [ext_resource path="res://source/components/move/MoveComponent.cs" type="Script" id=3]
-[ext_resource path="res://source/components/life/HandComponent.cs" type="Script" id=4]
+[ext_resource path="res://source/components/interplay/HandComponent.cs" type="Script" id=4]
 [ext_resource path="res://source/components/event/listener/InterplayEventListener.cs" type="Script" id=5]
 
 [node name="BaseLife" type="KinematicBody2D"]

@@ -6,9 +6,10 @@ using System.Collections.Generic;
 
 namespace Box.Blocks {
     [
-        Register(nameof(Thorns)),
+        Register(nameof(Thorns),false),
         BindScene("res://source/nodes/blocks/thorns/Thorns.tscn"),
-        BindTile("thorns")
+        BindTile("thorns"),
+        BlockNodeScript()
     ]
     public class Thorns : Area2D,IBlock,IRegister {
         [Export]
@@ -43,6 +44,8 @@ namespace Box.Blocks {
         }
         //接触绑定tile时触发
         public void _CellUnbind() {}
+
+        public void _Damage(Node entity){}
 
         public override void _Ready()
         {

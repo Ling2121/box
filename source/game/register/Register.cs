@@ -22,6 +22,10 @@ namespace Box {
         protected Dictionary<string,IEvent> events = new Dictionary<string, IEvent>();
         protected Dictionary<string,string> tile_bind_blocks = new Dictionary<string, string>();
 
+        protected Dictionary<string,IItem> item_singletons = new Dictionary<string, IItem>();
+        protected Dictionary<string,IBlock> block_singletons = new Dictionary<string, IBlock>();
+        protected Dictionary<string,IEntity> entity_singletons = new Dictionary<string, IEntity>();
+
         public List<string> BiomeNameList = new List<string>();
 
         protected Type EntityType = typeof(IEntity);
@@ -67,6 +71,9 @@ namespace Box {
                     switch(reg_type) {
                         case RegisterType.Entity : {
                             entities[reg_name] = type;
+                            if(reg_info.IsCreateSingleton){
+                                entity_singletons[reg_name] = Activator.CreateInstance(type) as IEntity;
+                            }
                         }break;
                         case RegisterType.Block : {
                             blocks[reg_name] = type;
@@ -74,9 +81,15 @@ namespace Box {
                             if(bind_tile != null) {
                                 tile_bind_blocks[bind_tile.TileName] = reg_name;
                             }
+                            if(reg_info.IsCreateSingleton){
+                                block_singletons[reg_name] = Activator.CreateInstance(type) as IBlock;
+                            }
                         }break;
                         case RegisterType.Item : {
                             items[reg_name] = type;
+                            if(reg_info.IsCreateSingleton){
+                                item_singletons[reg_name] = Activator.CreateInstance(type) as IItem;
+                            }
                         }break;
                         case RegisterType.Biome : {
                             IBiome biome = (IBiome)Activator.CreateInstance(type);
@@ -138,6 +151,16 @@ namespace Box {
             return Create(RegisterType.Item,name);
         }
 
+        public Node CreateTileBindBlock(string tile_name) {
+            if(!tile_bind_blocks.ContainsKey(tile_name)) return null;
+            return Create(RegisterType.Block,tile_bind_blocks[tile_name]);
+        }
+
+        public string GetTileBindBlockName(string tile_name) {
+            if(!tile_bind_blocks.ContainsKey(tile_name)) return "";
+            return tile_bind_blocks[tile_name];
+        }
+
         public IBiome GetBiome(string name) {
             if(!biomes.ContainsKey(name)) return null;
             return biomes[name];
@@ -148,9 +171,34 @@ namespace Box {
             return events[name];
         }
 
-        public Node CreateTileBindBlock(string tile_name) {
-            if(!tile_bind_blocks.ContainsKey(tile_name)) return null;
-            return Create(RegisterType.Block,tile_bind_blocks[tile_name]);
+        public IEntity GetEntityInstance(string name) {
+            if(!entity_singletons.ContainsKey(name)) return null;
+            return entity_singletons[name];
+        }
+
+        public IBlock GetBlockInstance(string name) {
+            if(!block_singletons.ContainsKey(name)) return null;
+            return block_singletons[name];
+        }
+
+        public IItem GetItemInstance(string name) {
+            if(!item_singletons.ContainsKey(name)) return null;
+            return item_singletons[name];
+        }
+
+        public Type GetEntityType(string name) {
+            if(!entities.ContainsKey(name)) return null;
+            return entities[name];
+        }
+
+        public Type GetBlockType(string name) {
+            if(!blocks.ContainsKey(name)) return null;
+            return blocks[name];
+        }
+
+        public Type GetItemType(string name) {
+            if(!items.ContainsKey(name)) return null;
+            return items[name];
         }
     }
 }

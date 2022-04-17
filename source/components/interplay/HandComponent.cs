@@ -22,6 +22,11 @@ namespace Box.Components
         [Signal]
         public delegate void receive_use(Node use_object,Node item);
 
+        [Signal]
+        public delegate void emit_damage_start(Node use_object,Node item);
+        [Signal]
+        public delegate void emit_damage_end(Node use_object,Node item);
+        
 
         [Export]
         public int AttackValue = 2;

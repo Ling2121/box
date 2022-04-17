@@ -187,6 +187,10 @@ namespace Box {
             return region.CellBindBlocks[index];
         }
 
+        protected bool BlockIsNodeScript(Type block_type) {
+            return block_type.GetCustomAttributes(typeof(BlockNodeScriptAttribute),true).FirstOrDefault() != null;
+        }
+
         public void CellBindBlock(SandboxLayer layer,int x,int y,string tile_name) {
             (SandboxRegion region,int region_cell_x,int region_cell_y) = CellOfLocal(x,y);
             TileMap map = LayerTileMaps[layer];
@@ -194,23 +198,29 @@ namespace Box {
             
             if(region.CellBindBlocks.ContainsKey(index)) {
                 IBlock old_block = region.CellBindBlocks[index];
-                if(old_block.IsAddToSandbox()) {
-                    (old_block as Node).Free();
+                if(BlockIsNodeScript(old_block.GetType())) {
+                    (old_block as Node)?.Free();
                 }
                 old_block._CellUnbind();
                 region.CellBindBlocks.Remove(index);
             }
-            Node block_node =  Register.Instance.CreateTileBindBlock(tile_name);
-            if(block_node != null) {
-
-                IBlock block = block_node as IBlock;
-                block.X = x;
-                block.Y = y;
-                if(block.IsAddToSandbox()){
-                    AddChild(block_node);
+            Register register = Register.Instance;
+            string block_name = register.GetTileBindBlockName(tile_name);
+            Type block_type = register.GetBlockType(block_name);
+            
+            if(block_type != null){
+                IBlock block = register.GetBlockInstance(block_name);
+                if(BlockIsNodeScript(block_type)){
+                    Node block_node = register.CreateBlock(block_name);
+                    block = block_node as IBlock;
+                    AddChild(block_node as Node);
                 }
-                region.CellBindBlocks[index] = block;
-                block._CellBind();
+                if(block != null){
+                    block.X = x;
+                    block.Y = y;
+                    region.CellBindBlocks[index] = block;
+                    block._CellBind();
+                }
             }
         }
 

@@ -3,7 +3,7 @@ using Box.Components;
 
 namespace Box.Events {
     [Register(nameof(CollisionEvent))]
-    public class CollisionEvent : IEvent {
+    public class CollisionEvent : IEvent,IRegister {
         public bool IsEnterEvent(params object[] args) {
             if(args.Length < 3) return false;
             return args[0] is Node && args[1] is Node && args[2] is bool;

@@ -10,6 +10,16 @@ namespace Box.Components {
 
         public HandComponent HandComponent;
 
+        // public IBlock GetSelectBlock() {
+        //     if(InterplayEventListener.Select is IBlock){
+        //         return InterplayEventListener.Select as IBlock;
+        //     }
+        //     Sandbox sandbox = Game.Instance.Sandbox;
+        //     Vector2 mouse_p = sandbox.GetLocalMousePosition();
+        //     Vector2 tile_p = sandbox.
+
+        // }
+
         public override void _Ready()
         {
             EventListeningComponent event_listening = GetParent().GetNodeOrNull<EventListeningComponent>(nameof(EventListeningComponent));
