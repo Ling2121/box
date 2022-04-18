@@ -6,6 +6,8 @@ namespace Box {
     public enum SandboxLayer {
         Land,
         Wall,
+
+        BG,
     }
 
 

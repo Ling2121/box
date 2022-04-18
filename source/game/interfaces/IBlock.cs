@@ -1,6 +1,8 @@
 using Godot;
 
 namespace Box {
+    //! 请务必从Godot.Object类型进行拓展
+
     /*
         方块也是实体的一种
         Tile可以绑定方块，当实体对其进行交互时才会创建其实例
@@ -8,8 +10,6 @@ namespace Box {
     public interface IBlock {
         int X {get;set;}
         int Y {get;set;}
-        //耐久
-        int Durable {get;set;}
         //硬度
         int Hardness {get;set;}
         //绑定tile时触发

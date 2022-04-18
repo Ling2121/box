@@ -27,7 +27,7 @@ namespace Box.Blocks {
         //耐久
         public int Durable {get;set;}
         //硬度
-        public int Hardness {get;set;}
+        public int Hardness {get;set;} = 2;
         //是否加入到场景中进行更新
         public bool IsAddToSandbox() {
             return true;

@@ -26,7 +26,23 @@ namespace Box {
         }
 
         public static Vector2 RegionToWorld(Vector2 p) {
-            return new Vector2(p.x * REGION_PIXEL_SIZE,p.y * REGION_PIXEL_SIZE);
+            return p * REGION_PIXEL_SIZE;
+        }
+
+        public static Vector2 WorldToCell(int x,int y) {
+            return WorldToCell(new Vector2(x,y));
+        }
+
+        public static Vector2 WorldToCell(Vector2 p){
+            return (p / REGION_CELL_PIXEL_SIZE).Floor();
+        }
+
+        public static Vector2 CellToWorld(Vector2 p) {
+            return p * REGION_CELL_PIXEL_SIZE;
+        }
+
+        public static Vector2 CellToWorld(int x,int y) {
+            return CellToWorld(new Vector2(x,y));
         }
 
         [Export]
@@ -184,6 +200,7 @@ namespace Box {
         public IBlock GetCellBindBlock(SandboxLayer layer,int x,int y) {
             (SandboxRegion region,int region_cell_x,int region_cell_y) = CellOfLocal(x,y);
             int index = region_cell_y * Sandbox.REGION_SIZE + region_cell_x;
+            if(!region.CellBindBlocks.ContainsKey(index)) return null;
             return region.CellBindBlocks[index];
         }
 
@@ -204,6 +221,8 @@ namespace Box {
                 old_block._CellUnbind();
                 region.CellBindBlocks.Remove(index);
             }
+            if(tile_name == "") return;
+            
             Register register = Register.Instance;
             string block_name = register.GetTileBindBlockName(tile_name);
             Type block_type = register.GetBlockType(block_name);

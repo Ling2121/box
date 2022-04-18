@@ -3,7 +3,10 @@ using Box.Components;
 
 namespace Box.Events {
     [Register(nameof(CollisionEvent))]
-    public class CollisionEvent : IEvent,IRegister {
+    public class CollisionEvent : Godot.Object,IEvent,IRegister {
+        [Signal]
+        public delegate void collision(Node e1,Node e2,bool is_enter);
+
         public bool IsEnterEvent(params object[] args) {
             if(args.Length < 3) return false;
             return args[0] is Node && args[1] is Node && args[2] is bool;
@@ -13,10 +16,13 @@ namespace Box.Events {
             Node collision = args[1] as Node;
             bool is_enter = (bool)args[2];
 
+            EmitSignal(nameof(collision),self,collision,is_enter);
+
             string event_name = nameof(CollisionEventListener.collision_exited);
             if(is_enter) {
                 event_name = nameof(CollisionEventListener.collision_entered);
             }
+            
             EventListeningComponent a_event_listening = self.GetNodeOrNull<EventListeningComponent>(nameof(EventListeningComponent));
             CollisionEventListener a_collision_event = a_event_listening?.GetListener<CollisionEventListener>();
             a_collision_event?.EmitSignal(event_name,self,collision);

@@ -21,15 +21,11 @@ namespace Box.Test.BlockTest {
         {
             if(@event is InputEventMouseButton){
                 InputEventMouseButton mouse = @event as InputEventMouseButton;
-                Vector2 position = (GetLocalMousePosition() / Sandbox.REGION_CELL_PIXEL_SIZE).Floor();        
+                Vector2 position = Sandbox.WorldToCell(GetLocalMousePosition());        
                 if(mouse.IsPressed()){
-                    GD.Print(position);
-                    if(mouse.ButtonIndex == (int)ButtonList.Left) {
-                        sandbox.SetCell(SandboxLayer.Wall,(int)position.x,(int)position.y,"thorns");
-                    }
-                    if(mouse.ButtonIndex == (int)ButtonList.Right) {
-                        sandbox.SetCell(SandboxLayer.Wall,(int)position.x,(int)position.y,"");
-                    }
+                    // if(mouse.ButtonIndex == (int)ButtonList.Left) {
+                    //     sandbox.SetCell(SandboxLayer.Wall,(int)position.x,(int)position.y,"thorns");
+                    // }
                 }
             }
         }
