@@ -7,7 +7,7 @@ using Box.Events;
 namespace Box.Components {
 
     [ClassName(nameof(MoveComponent))]
-    public class MoveComponent : Node {
+    public class MoveComponent : Node,IComponent {
         protected enum MoveType {
             KinematicBody2D,
             Node2D,

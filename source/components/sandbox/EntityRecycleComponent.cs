@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Box.Components {
     [ClassName(nameof(EntityRecycleComponent))]
-    public class EntityRecycleComponent : Node {
+    public class EntityRecycleComponent : Node,IComponent {
         protected Node2D parent;
         protected Game game;
 

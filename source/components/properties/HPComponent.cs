@@ -4,15 +4,15 @@ using Godot;
 namespace Box.Components {
 
     [ClassName(nameof(HPComponent))]
-    public class HPComponent : Node {
+    public class HPComponent : Node,IComponent {
         [Signal]
-        public delegate void Death(HPComponent self);
+        public delegate void death(HPComponent self);
         [Signal]
-        public delegate void Injured(HPComponent self,int value);
+        public delegate void injured(HPComponent self,int value);
         [Signal]
-        public delegate void Recovery(HPComponent self,int value);
+        public delegate void recovery(HPComponent self,int value);
         [Signal]
-        public delegate void Change(HPComponent self,int value);
+        public delegate void change(HPComponent self,int value);
 
         [Export]
         public int HP {
@@ -20,14 +20,14 @@ namespace Box.Components {
             
             set {
                 if(value != hp) {
-                    EmitSignal(nameof(Change),this,value);
+                    EmitSignal(nameof(change),this,value);
                     int s = value - hp;
                     hp = value;
                     if(s < 0) {
-                        EmitSignal(nameof(Injured),this,Mathf.Abs(s));
+                        EmitSignal(nameof(injured),this,Mathf.Abs(s));
                     }
                     if(s > 0) {
-                        EmitSignal(nameof(Recovery),this,s);
+                        EmitSignal(nameof(recovery),this,s);
                     }
                     if(hp > MaxHP) {
                         hp = MaxHP;
@@ -45,7 +45,7 @@ namespace Box.Components {
         {
             if(hp <= 0) {
                 hp = 0;
-                EmitSignal(nameof(Death),this);
+                EmitSignal(nameof(death),this);
                 if(hp <= 0) {
                     GetParent().QueueFree();
                 }

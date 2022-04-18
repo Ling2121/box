@@ -77,9 +77,9 @@ namespace Box {
                         }break;
                         case RegisterType.Block : {
                             blocks[reg_name] = type;
-                            var bind_tile = type.GetCustomAttribute<BindTileAttribute>();
+                            var bind_tile = type.GetCustomAttribute<BindCellAttribute>();
                             if(bind_tile != null) {
-                                tile_bind_blocks[bind_tile.TileName] = reg_name;
+                                tile_bind_blocks[bind_tile.CellName] = reg_name;
                             }
                             if(reg_info.IsCreateSingleton){
                                 block_singletons[reg_name] = Activator.CreateInstance(type) as IBlock;

@@ -24,7 +24,7 @@ namespace Box {
         public Dictionary<Node,Node> Objects {get;} = new Dictionary<Node, Node>();
     
         public Dictionary<SandboxLayer,int[,]> Layers {get;} = new Dictionary<SandboxLayer, int[,]>();
-        public Dictionary<int,IBlock> CellBindBlocks {get;} = new Dictionary<int, IBlock>();
+        public Dictionary<int,IBlock> CellBlockInstances {get;} = new Dictionary<int, IBlock>();
 
         public NumberIndexPool IndexPool = new NumberIndexPool();
 
@@ -52,41 +52,22 @@ namespace Box {
             }
         }
 
-        public IBlock GetCellBlockBind(int x,int y) {
-            int index = y * Sandbox.REGION_SIZE + x;
-            return CellBindBlocks[index];
-        }
-
-        public void CellBindBlock(SandboxLayer layer,IBlock block,int x,int y) {
-            int index = y * Sandbox.REGION_SIZE + x;
-            block.X = x;
-            block.Y = y;
-            CellBindBlocks[index] = block;
-        }
-
-        public void CellUnbindBlock(SandboxLayer layer,int x,int y) {
-             int index = y * Sandbox.REGION_SIZE + x;
-
-        }
-
         protected void SetCell(SandboxLayer layer,int x,int y,string tile_name) {
             if(x < 0 || x >= Sandbox.REGION_SIZE || y < 0 || y >= Sandbox.REGION_SIZE) return;
             int[,] lay = Layers[layer];
             int wx = TileOriginX + x;
             int wy = TileOriginY + y;
-            TileMap map = Sandbox.LayerTileMaps[layer];
+            TileMap map = Sandbox.TileMapLayers[layer];
             if(tile_name != "") {
                 int id = IndexPool.GetIndex(tile_name);
                 lay[x,y] = id;
                 int tile_id = map.TileSet.FindTileByName(tile_name);
                 map.CallDeferred("set_cell",wx,wy,tile_id);
                 Layers[layer][x,y] = tile_id;
-                Sandbox.CellBindBlock(layer,x,y,tile_name);
             } else {
                 lay[x,y] = -1;
                 map.CallDeferred("set_cell",wx,wy,-1);
                 Layers[layer][x,y] = -1;
-                Sandbox.CellBindBlock(layer,x,y,tile_name);
             }
             
         }

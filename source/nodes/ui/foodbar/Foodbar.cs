@@ -21,9 +21,9 @@ namespace Box.UI {
                     MaxValue = fc.MaxFood;
                     Value = fc.Food;
 
-                    fc.Connect(nameof(Components.FoodComponent.Change),this,nameof(_Change));
+                    fc.Connect(nameof(Components.FoodComponent.change),this,nameof(_Change));
 
-                    fc.Connect(nameof(Components.FoodComponent.Hunger),this,nameof(_Hunger));
+                    fc.Connect(nameof(Components.FoodComponent.hunger),this,nameof(_Hunger));
                 }
             }
         }

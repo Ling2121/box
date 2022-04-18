@@ -65,12 +65,12 @@ namespace Box {
         //区块卸载队列
         public ConcurrentQueue<(int x,int y)> RegionUnloadInstructQueue {get;protected set;} = new ConcurrentQueue<(int x,int y)>();
         public TileMap LandTileMap {get {
-            return LayerTileMaps[SandboxLayer.Land];
+            return TileMapLayers[SandboxLayer.Land];
         }}
         public TileMap WallTileMap {get {
-            return LayerTileMaps[SandboxLayer.Wall];
+            return TileMapLayers[SandboxLayer.Wall];
         }}
-        public Dictionary<SandboxLayer,TileMap> LayerTileMaps = new Dictionary<SandboxLayer, TileMap>();
+        public Dictionary<SandboxLayer,TileMap> TileMapLayers = new Dictionary<SandboxLayer, TileMap>();
         //地图加载器
         public SanboxLoader SanboxLoader; 
     
@@ -120,8 +120,8 @@ namespace Box {
                 AddChild(wall_tile_map);
             }
 
-            LayerTileMaps[SandboxLayer.Land] = land_tile_map;
-            LayerTileMaps[SandboxLayer.Wall] = wall_tile_map;
+            TileMapLayers[SandboxLayer.Land] = land_tile_map;
+            TileMapLayers[SandboxLayer.Wall] = wall_tile_map;
 
             region_load_thread = Task.Run(_RegionLoadThread);
             region_unload_thread = Task.Run(_RegionUnLoadThread);
@@ -188,59 +188,25 @@ namespace Box {
         }
 
         public void SetCell(SandboxLayer layer,int x,int y,string tile_name) {
-            TileMap map = LayerTileMaps[layer];
+            TileMap map = TileMapLayers[layer];
             int tile_id = map.TileSet.FindTileByName(tile_name);
             (SandboxRegion region,int region_cell_x,int region_cell_y) = CellOfLocal(x,y);
             
             map.CallDeferred("set_cell",x,y,tile_id);
             region.Layers[layer][region_cell_x,region_cell_y] = region.IndexPool.GetIndex(tile_name);
-            CellBindBlock(layer,x,y,tile_name);
         }
 
-        public IBlock GetCellBindBlock(SandboxLayer layer,int x,int y) {
+        public IBlock GetCellBlockInstance(SandboxLayer layer,int x,int y) {
             (SandboxRegion region,int region_cell_x,int region_cell_y) = CellOfLocal(x,y);
+            TileMap map = TileMapLayers[layer];
             int index = region_cell_y * Sandbox.REGION_SIZE + region_cell_x;
-            if(!region.CellBindBlocks.ContainsKey(index)) return null;
-            return region.CellBindBlocks[index];
-        }
-
-        protected bool BlockIsNodeScript(Type block_type) {
-            return block_type.GetCustomAttributes(typeof(BlockNodeScriptAttribute),true).FirstOrDefault() != null;
-        }
-
-        public void CellBindBlock(SandboxLayer layer,int x,int y,string tile_name) {
-            (SandboxRegion region,int region_cell_x,int region_cell_y) = CellOfLocal(x,y);
-            TileMap map = LayerTileMaps[layer];
-            int index = region_cell_y * Sandbox.REGION_SIZE + region_cell_x;
-            
-            if(region.CellBindBlocks.ContainsKey(index)) {
-                IBlock old_block = region.CellBindBlocks[index];
-                if(BlockIsNodeScript(old_block.GetType())) {
-                    (old_block as Node)?.Free();
-                }
-                old_block._CellUnbind();
-                region.CellBindBlocks.Remove(index);
+            if(region.CellBlockInstances.ContainsKey(index)) {
+                return region.CellBlockInstances[index];
             }
-            if(tile_name == "") return;
-            
+            string tile_name = map.TileSet.TileGetName(map.GetCell(x,y));
             Register register = Register.Instance;
-            string block_name = register.GetTileBindBlockName(tile_name);
-            Type block_type = register.GetBlockType(block_name);
-            
-            if(block_type != null){
-                IBlock block = register.GetBlockInstance(block_name);
-                if(BlockIsNodeScript(block_type)){
-                    Node block_node = register.CreateBlock(block_name);
-                    block = block_node as IBlock;
-                    AddChild(block_node as Node);
-                }
-                if(block != null){
-                    block.X = x;
-                    block.Y = y;
-                    region.CellBindBlocks[index] = block;
-                    block._CellBind();
-                }
-            }
+            Node instance = register.CreateBlock(register.GetTileBindBlockName(tile_name));
+            return instance as IBlock;
         }
 
         public ISandboxRegion GetRegion(int rx,int ry) {
@@ -272,8 +238,8 @@ namespace Box {
         public void RemoveRegion(ISandboxRegion region) {
             for(int y = region.TileOriginY;y < region.TileMaxY;y++) {
                 for(int x = region.TileOriginX;x < region.TileMaxX;x++) {
-                    LayerTileMaps[SandboxLayer.Land].CallDeferred("set_cell",x,y,TileMap.InvalidCell);
-                    LayerTileMaps[SandboxLayer.Wall].CallDeferred("set_cell",x,y,TileMap.InvalidCell);
+                    TileMapLayers[SandboxLayer.Land].CallDeferred("set_cell",x,y,TileMap.InvalidCell);
+                    TileMapLayers[SandboxLayer.Wall].CallDeferred("set_cell",x,y,TileMap.InvalidCell);
                 }
             }
         }

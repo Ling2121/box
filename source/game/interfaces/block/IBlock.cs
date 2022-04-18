@@ -1,0 +1,12 @@
+using Godot;
+
+namespace Box {
+    public interface IBlock {
+        //硬度
+        int Hardness {get;set;}
+        //被破坏时触发
+        void _Damage(Node entity); 
+        //破坏完毕时触发
+        void _DamageComplete(Node entity);
+    }
+}

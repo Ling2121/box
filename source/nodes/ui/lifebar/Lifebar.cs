@@ -21,7 +21,7 @@ namespace Box.UI {
                     MinValue = 0;
                     MaxValue = hpc.MaxHP;
                     Value = hpc.HP;
-                    hpc.Connect(nameof(Components.HPComponent.Change),this,nameof(_Change));
+                    hpc.Connect(nameof(Components.HPComponent.change),this,nameof(_Change));
                 }
             }
         }

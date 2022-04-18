@@ -13,6 +13,6 @@ namespace Box {
 
         Dictionary<Node,Node> Objects {get;}
         Dictionary<SandboxLayer,int[,]> Layers {get;}
-        Dictionary<int,IBlock> CellBindBlocks {get;}
+        Dictionary<int,IBlock> CellBlockInstances {get;}
     }   
 }

@@ -2,7 +2,7 @@ using Godot;
 
 namespace Box.Components {
     [ClassName(nameof(ArmorComponent))]
-    public class ArmorComponent : Node {
+    public class ArmorComponent : Node,IComponent {
         [Export]
         public int Armor = 1;
 
@@ -10,9 +10,9 @@ namespace Box.Components {
 
         public override void _Ready()
         {
-            HPComponent = GetParent().GetNodeOrNull<HPComponent>(nameof(HPComponent));
+            HPComponent = EntityHelper.GetComponent<HPComponent>(GetParent());
             if(HPComponent != null) {
-                HPComponent.Connect(nameof(HPComponent.Injured),this,nameof(_Injured));
+                HPComponent.Connect(nameof(HPComponent.injured),this,nameof(_Injured));
             }
         }
 

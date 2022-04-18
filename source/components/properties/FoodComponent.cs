@@ -2,13 +2,13 @@ using Godot;
 
 namespace Box.Components {
     [ClassName(nameof(FoodComponent))]
-    public class FoodComponent : Node {
+    public class FoodComponent : Node,IComponent {
         [Signal]
-        public delegate void Hunger(FoodComponent self);
+        public delegate void hunger(FoodComponent self);
         [Signal]
-        public delegate void VeryHungry(FoodComponent self);
+        public delegate void veryHungry(FoodComponent self);
         [Signal]
-        public delegate void Change(HPComponent self,int value);
+        public delegate void change(HPComponent self,int value);
 
         [Export]
         //食物值
@@ -19,14 +19,14 @@ namespace Box.Components {
             set {
                 if(value <= 0) value = 0;
                 if(food != value) {
-                    EmitSignal(nameof(Change),this,value);
+                    EmitSignal(nameof(change),this,value);
                     food = value;
                     if(value > MaxFood) {
                         food = MaxFood;
                     }
                     if(value == 0) {
                         food = 0;
-                        EmitSignal(nameof(VeryHungry),this);
+                        EmitSignal(nameof(veryHungry),this);
                     }
                 }
             }
@@ -63,7 +63,7 @@ namespace Box.Components {
             if(!IsHunger) {
                 if(Food <= (MaxFood * HungerThresholdValue)) {
                     IsHunger = true;
-                    EmitSignal(nameof(Hunger),this);
+                    EmitSignal(nameof(hunger),this);
                 }
             } else {
                 if(Food > (MaxFood * HungerThresholdValue)) {

@@ -20,7 +20,7 @@ namespace Box.Components {
 
         public override void _Ready()
         {
-            move_component = GetParent().GetNodeOrNull<MoveComponent>(nameof(MoveComponent));
+            move_component = EntityHelper.GetComponent<MoveComponent>(GetParent());
             if(move_component == null) {
                 GD.PushError($"{nameof(MoveControllerComponent)} : 父类需要有 {nameof(MoveComponent)} 组件");
             }

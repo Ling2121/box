@@ -31,7 +31,7 @@ namespace Box.Entities.Lifes {
             CollisionEventListener.Connect(nameof(CollisionEventListener.collision_entered),this,nameof(_CollisionEntered));
             CollisionEventListener.Connect(nameof(CollisionEventListener.collision_exited),this,nameof(_CollisionExited));
         
-            HPComponent.Connect(nameof(HPComponent.Injured),this,nameof(_Injured));
+            HPComponent.Connect(nameof(HPComponent.injured),this,nameof(_Injured));
         }
 
         public void _CollisionEntered(Node self,Node collision) {

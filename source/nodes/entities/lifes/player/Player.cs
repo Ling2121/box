@@ -15,8 +15,8 @@ namespace Box.Entities.Lifes {
 
             HandComponent.Connect(nameof(HandComponent.emit_attack),this,nameof(_Attack));
             HandComponent.Connect(nameof(HandComponent.receive_attack),this,nameof(_ReceiveAttack));
-            HPComponent.Connect(nameof(HPComponent.Injured),this,nameof(_Injured));
-            HPComponent.Connect(nameof(HPComponent.Recovery),this,nameof(_Recovery));
+            HPComponent.Connect(nameof(HPComponent.injured),this,nameof(_Injured));
+            HPComponent.Connect(nameof(HPComponent.recovery),this,nameof(_Recovery));
         }
 
         public void _Attack(Node receive_object,Itmes.Tools.BaseTool item) {

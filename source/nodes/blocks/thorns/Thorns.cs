@@ -7,25 +7,17 @@ using System.Collections.Generic;
 namespace Box.Blocks {
     [
         Register(nameof(Thorns),false),
-        BindScene("res://source/nodes/blocks/thorns/Thorns.tscn"),
-        BindTile("thorns"),
-        BlockNodeScript()
+        BindTile("thorns")
     ]
-    public class Thorns : Area2D,IBlock,IRegister {
+    //BindScene("res://source/nodes/blocks/thorns/Thorns.tscn"),
+    public class Thorns : Area2D,IRegister {
         [Export]
         public float HurtSpeed = 1;
 
         protected float hurt_timer = 0;
-
         CollisionEventListener CollisionEventListener;
         HandComponent HandComponent;
-
         public Dictionary<Node,Node> hurt_table = new Dictionary<Node, Node>();
-
-        public int X {get;set;}
-        public int Y {get;set;}
-        //耐久
-        public int Durable {get;set;}
         //硬度
         public int Hardness {get;set;} = 2;
         //是否加入到场景中进行更新
@@ -65,7 +57,6 @@ namespace Box.Blocks {
         public void _CollisionExited(Node self,Node collision) {
             hurt_table.Remove(collision);
         }
-
         public override void _Process(float delta)
         {
             hurt_timer += delta;

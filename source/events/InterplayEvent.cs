@@ -7,11 +7,10 @@ namespace Box.Events {
     public enum InterplayType {
         Attack,
         Interplay,
-        MouseCenter,
     }
 
     [Register(nameof(InterplayEvent))]
-    public class InterplayEvent : Godot.Object,IEvent,IRegister {
+    public class InterplayEvent : Godot.Object,IEvent {
         [Signal]
         public delegate void interplay(InterplayType type,Node e1,Node e2,Node item);
 
@@ -29,18 +28,7 @@ namespace Box.Events {
             var emit_object    = args[1] as Node;
             var receive_object = args[2] as Node;
             var interplay_item = args[3] as Node;
-
             EmitSignal(nameof(interplay),emit_object,receive_object,interplay_item);
-
-
-            EventListeningComponent emit_event_listening = emit_object.GetNodeOrNull<EventListeningComponent>(nameof(EventListeningComponent));
-            InterplayEventListener emit_event = emit_event_listening?.GetListener<InterplayEventListener>();
-            emit_event?.EmitSignal(nameof(InterplayEventListener.emit_interplay),receive_object,interplay_type,interplay_item);
-            
-
-            EventListeningComponent receive_event_listening = receive_object.GetNodeOrNull<EventListeningComponent>(nameof(EventListeningComponent));
-            InterplayEventListener receive_event = receive_event_listening?.GetListener<InterplayEventListener>();
-            receive_event?.EmitSignal(nameof(InterplayEventListener.receive_interplay),emit_object,interplay_type,interplay_item);
         }
     }
 }

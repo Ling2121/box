@@ -2,7 +2,7 @@ using Godot;
 
 namespace Box.Components {
     [ClassName(nameof(RegionFollowLoadingComponent))]
-    public class RegionFollowLoadingComponent : Node {
+    public class RegionFollowLoadingComponent : Node,IComponent {
         [Export]
         public int LoadRadius = 4;
         protected int old_cx = 0;

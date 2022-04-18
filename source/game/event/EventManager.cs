@@ -10,7 +10,7 @@ namespace Box {
             Game.Instance.EventManager = this;
         }
 
-        public bool RequestEvent(string event_name,params object[] args) {
+        public bool PublishEvent(string event_name,params object[] args) {
             IEvent e = register.GetEvent(event_name);
             if(e == null) return false;
             if(e.IsEnterEvent(args)) {
