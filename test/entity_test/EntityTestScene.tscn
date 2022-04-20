@@ -1,10 +1,13 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://source/nodes/entities/lifes/spine_man/SpineMan.tscn" type="PackedScene" id=1]
 [ext_resource path="res://source/nodes/entities/lifes/player/Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://source/game/event/EventManager.cs" type="Script" id=3]
+[ext_resource path="res://source/nodes/sandbox/Sandbox.cs" type="Script" id=4]
+[ext_resource path="res://test/entity_test/TestBlock.tscn" type="PackedScene" id=5]
 
-[node name="Node2D" type="Node2D"]
+[node name="Node2D" type="YSort"]
+script = ExtResource( 4 )
 
 [node name="EventManager" type="Node" parent="."]
 script = ExtResource( 3 )
@@ -17,3 +20,6 @@ position = Vector2( 213, 467 )
 
 [node name="SpineMan" parent="." instance=ExtResource( 1 )]
 position = Vector2( 595, 310 )
+
+[node name="Node2D" parent="." instance=ExtResource( 5 )]
+position = Vector2( 332, 314 )

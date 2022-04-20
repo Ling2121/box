@@ -1,37 +1,10 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://source/nodes/entities/lifes/BaseLife.tscn" type="PackedScene" id=1]
-[ext_resource path="res://source/components/event/listener/CollisionEventListener.cs" type="Script" id=2]
-[ext_resource path="res://source/components/interplay/HandComponent.cs" type="Script" id=3]
 [ext_resource path="res://source/nodes/entities/lifes/spine_man/SpineMan.cs" type="Script" id=4]
-[ext_resource path="res://icon.png" type="Texture" id=5]
-[ext_resource path="res://source/nodes/ui/lifebar/Lifebar.tscn" type="PackedScene" id=6]
-[ext_resource path="res://source/components/properties/ArmorComponent.cs" type="Script" id=7]
-
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 32, 32 )
 
 [node name="SpineMan" instance=ExtResource( 1 )]
 script = ExtResource( 4 )
 
-[node name="Icon" type="Sprite" parent="." index="0"]
-texture = ExtResource( 5 )
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="1"]
-shape = SubResource( 1 )
-
-[node name="ArmorComponent" type="Node" parent="." index="4"]
-script = ExtResource( 7 )
-
-[node name="Lifebar" parent="." index="5" instance=ExtResource( 6 )]
-margin_left = -60.0
-margin_top = -46.0
-margin_right = 61.0
-margin_bottom = -37.0
-HPComponent = NodePath("../HPComponent")
-
-[node name="HandComponent" parent="." index="6"]
-script = ExtResource( 3 )
-
-[node name="CollisionEventListener" type="Node2D" parent="EventListeningComponent" index="1"]
-script = ExtResource( 2 )
+[node name="Icon" parent="." index="0"]
+scale = Vector2( 0.25, 0.25 )

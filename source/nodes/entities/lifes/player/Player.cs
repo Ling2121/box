@@ -3,37 +3,34 @@ using System;
 using Box.Components;
 
 namespace Box.Entities.Lifes {
-    public class Player : KinematicBody2D
-    {
-        HandComponent HandComponent;
-        HPComponent HPComponent;
+    public class Player : KinematicBody2D {
+        InterplayComponent InterplayComponent;
 
         public override void _Ready()
         {
-            HandComponent = GetNode<HandComponent>(nameof(HandComponent));
-            HPComponent = GetNode<HPComponent>(nameof(HPComponent));
+            InterplayComponent = EntityHelper.GetComponent<InterplayComponent>(this);
 
-            HandComponent.Connect(nameof(HandComponent.emit_attack),this,nameof(_Attack));
-            HandComponent.Connect(nameof(HandComponent.receive_attack),this,nameof(_ReceiveAttack));
-            HPComponent.Connect(nameof(HPComponent.injured),this,nameof(_Injured));
-            HPComponent.Connect(nameof(HPComponent.recovery),this,nameof(_Recovery));
+            InterplayComponent.Connect(nameof(InterplayComponent.emit_interplay),this,nameof(_EmitInterplay));
+            InterplayComponent.Connect(nameof(InterplayComponent.receive_interplay),this,nameof(_ReceiveInterplay));
+
+            InterplayComponent.Connect(nameof(InterplayComponent.emit_long_interplay_start),this,nameof(_LongEmitInterplayStart));
+            InterplayComponent.Connect(nameof(InterplayComponent.emit_long_interplay_end),this,nameof(_LongEmitInterplayEnd));
         }
 
-        public void _Attack(Node receive_object,Itmes.Tools.BaseTool item) {
-            GD.Print($"打了{receive_object.Name}一下");
+        public void _EmitInterplay(InterplayComponent.InterplayItem item) {
+            GD.Print($"emit {Name} :{item.Type} -> {item.ReceiveObject.Name} : {item.Item.GetType().Name}");
         }
 
-        public void _ReceiveAttack(Node emit_object,Itmes.Tools.BaseTool item) {
-            GD.Print($"你被{emit_object.Name}打了一下");
+        public void _ReceiveInterplay(InterplayComponent.InterplayItem item) {
+            GD.Print($"receive {Name} :{item.Type} -> {item.ReceiveObject.Name} : {item.Item.GetType().Name}");
         }
 
-        public void _Injured(HPComponent self,int value){
-            GD.Print($"你受到了{value}点伤害");
+        public void _LongEmitInterplayStart(InterplayComponent.InterplayItem item) {
+            GD.Print($"emit_long_start {Name} :{item.Type} -> {item.ReceiveObject.Name} : {item.Item.GetType().Name}");
         }
 
-        public void _Recovery(HPComponent self,int value){
-            GD.Print($"你恢复了{value}点血量");
+        public void _LongEmitInterplayEnd(InterplayComponent.InterplayItem item) {
+            GD.Print($"emit_long_end {Name} :{item.Type} -> {item.ReceiveObject.Name} : {item.Item.GetType().Name}");
         }
     }
-
 }

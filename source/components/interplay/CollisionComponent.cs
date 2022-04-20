@@ -2,6 +2,7 @@ using Godot;
 using Box.Events;
 
 namespace Box.Components {
+    [ClassName(nameof(CollisionComponent))]
     public class CollisionComponent : Area2D,IComponent {
         [Signal]
         public delegate void collision_entered(Node collision);

@@ -203,7 +203,9 @@ namespace Box {
             if(region.CellBlockInstances.ContainsKey(index)) {
                 return region.CellBlockInstances[index];
             }
-            string tile_name = map.TileSet.TileGetName(map.GetCell(x,y));
+            int tile_id = map.GetCell(x,y);
+            if(tile_id == TileMap.InvalidCell) return null;
+            string tile_name = map.TileSet.TileGetName(tile_id);
             Register register = Register.Instance;
             Node instance = register.CreateBlock(register.GetTileBindBlockName(tile_name));
             return instance as IBlock;

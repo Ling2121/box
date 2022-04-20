@@ -1,6 +1,7 @@
 using Godot;
 
 namespace Box.Components {
+    [ClassName(nameof(AttackComponent))]
     public class AttackComponent : Node,IComponent {
         [Export]
         public int AttackValue = 2;
