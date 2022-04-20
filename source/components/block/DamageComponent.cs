@@ -40,8 +40,12 @@ namespace Box.Components {
             if(timer.ElapsedMilliseconds >= time) {
                 timer.Stop();
                 timer.Reset();
-                Block.QueueFree();
+                Game.Instance.Sandbox.FreeBlockInstances(Block);
+            } else {
+                timer.Stop();
+                timer.Reset();
             }
+            
         }
     }
 }

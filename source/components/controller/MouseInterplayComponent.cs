@@ -22,12 +22,12 @@ namespace Box.Components
             Sandbox sandbox = Game.Instance.Sandbox;
             Vector2 mouse_p = sandbox.GetLocalMousePosition();
             Vector2 tile_p = Sandbox.WorldToCell(mouse_p);
-            
+
             int max_layer = (int)SandboxLayer.BG - 1;
             for(int i = max_layer;i >= 0;i--){
                 IBlock block = sandbox.GetCellBlockInstance((SandboxLayer)i,(int)tile_p.x,(int)tile_p.y);
                 if(block != null){
-                    return block as Node;
+                    return (block as Node);
                 }
             }
 
@@ -48,14 +48,13 @@ namespace Box.Components
                 if(Input.IsActionJustPressed("attack")) {
                     Node select = GetSelect();
                     if(select == null) return;
-
                     long_attack_timer.Start();
                     if(!HandComponent.IsEmpty()) {
                         foreach (var hand in HandComponent.Hands.Values) {
-                            InterplayComponent.Interplay(InterplayType.Attack, select, hand.Take);
+                            var item = InterplayComponent.Interplay(InterplayType.Attack, select, hand.Take);
                         }
                     } else {
-                        InterplayComponent.Interplay(InterplayType.Attack, select, AttackComponent);
+                        var item = InterplayComponent.Interplay(InterplayType.Attack, select, AttackComponent);
                     }
                 }
                 if(long_attack_timer.IsRunning) {
@@ -64,6 +63,9 @@ namespace Box.Components
                         long_attack_timer.Reset();
                     }
                     if(long_attack_timer.ElapsedMilliseconds > LongInterplayTime) {
+                        long_attack_timer.Stop();
+                        long_attack_timer.Reset();
+
                         Node select = GetSelect();
                         if(select == null) return;
 

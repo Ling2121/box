@@ -1,8 +1,75 @@
-// using Godot;
-// using System;
-// using Box.Components;
-// using Box.Events;
-// using System.Collections.Generic;
+using Godot;
+using System;
+using Box.Components;
+using Box.Events;
+using System.Collections.Generic;
+
+namespace Box.Blocks {
+    [
+        Register(nameof(Thorns),false),
+        BindCell("thorns",true),
+        BindScene("res://source/nodes/blocks/thorns/Thorns.tscn"),
+    ]
+    public class Thorns : Node2D,ICellBlock {
+        //硬度
+        public int Hardness {get;} = 3;
+
+        public SandboxLayer Layer {get;set;}
+        public int X {get;set;}
+        public int Y {get;set;}
+
+        [Export]
+        public float HurtSpeed = 1;
+        protected float hurt_timer = 0;
+        public Dictionary<Node,Node> hurt_table = new Dictionary<Node, Node>();
+
+        public CollisionComponent CollisionComponent;
+        public AttackComponent AttackComponent;
+
+
+        //被破坏时触发
+        public void _Damage(Node entity) {}
+        //破坏完毕时触发
+        public void _DamageComplete(Node entity) {}
+
+        public override void _Ready()
+        {
+            CollisionComponent = EntityHelper.GetComponent<CollisionComponent>(this);
+            AttackComponent = EntityHelper.GetComponent<AttackComponent>(this);
+
+            CollisionComponent.Connect(nameof(CollisionComponent.collision_entered),this,nameof(_CollisionEntered));
+            CollisionComponent.Connect(nameof(CollisionComponent.collision_exited),this,nameof(_CollisionExited));
+        }
+
+        public void _CollisionEntered(Node body) {
+            if(EntityHelper.GetComponent<HPComponent>(body) != null) {
+                hurt_table[body] = body;
+            }
+        }
+
+
+        public void _CollisionExited(Node body) {
+            if(hurt_table.ContainsKey(body)) {
+                hurt_table.Remove(body);
+            }
+        }
+
+        public override void _Process(float delta)
+        {
+            hurt_timer += delta;
+            if(hurt_timer >= HurtSpeed){
+                hurt_timer = 0;
+                foreach(Node entity in hurt_table.Values) {
+                    var hp = EntityHelper.GetComponent<HPComponent>(entity);
+                    if(hp != null) {
+                        hp.HP -= AttackComponent.AttackValue;
+                    }
+                }
+            }
+        }
+
+    }
+}
 
 // namespace Box.Blocks {
 //     [

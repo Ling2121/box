@@ -9,6 +9,8 @@ using System.Collections.Concurrent;
 namespace Box {
     [ClassName("Sandbox")]
     public class Sandbox : YSort,ISandbox {
+        public class CellBlockInstanceError : Exception {}
+
         public const int REGION_CELL_PIXEL_SIZE = 16;
         public const int REGION_SIZE = 16;
         public const int REGION_PIXEL_SIZE = REGION_CELL_PIXEL_SIZE * REGION_SIZE;
@@ -208,7 +210,51 @@ namespace Box {
             string tile_name = map.TileSet.TileGetName(tile_id);
             Register register = Register.Instance;
             Node instance = register.CreateBlock(register.GetTileBindBlockName(tile_name));
-            return instance as IBlock;
+            
+            if(instance == null) return null;
+
+            if(!(instance is ICellBlock)) {
+                throw new CellBlockInstanceError();
+            }
+            ICellBlock cell_block = instance as ICellBlock;
+            cell_block.Layer = layer;
+            cell_block.X = x;
+            cell_block.Y = y;
+
+            region.CellBlockInstances[index] = instance as IBlock;
+            var bind_info = BlockHelper.GetCellBindInfo(instance);
+
+            if(bind_info != null && bind_info.IsAddToScene == true) {
+                Node2D node2d = instance as Node2D;
+                if(node2d != null) {
+                    node2d.Position = 
+                        new Vector2(x * REGION_CELL_PIXEL_SIZE,y * REGION_CELL_PIXEL_SIZE) +
+                        new Vector2(REGION_CELL_PIXEL_SIZE / 2,REGION_CELL_PIXEL_SIZE / 2)
+                        ;
+                }
+                AddChild(instance);
+            }
+            return region.CellBlockInstances[index];
+        }
+
+        public void FreeBlockInstances(Node node) {
+            if(node is ICellBlock) {
+                ICellBlock block = node as ICellBlock;
+                SandboxLayer layer = block.Layer;
+                int x = block.X;
+                int y = block.Y;
+
+                (SandboxRegion region,int region_cell_x,int region_cell_y) = CellOfLocal(x,y);
+                int index = region_cell_y * Sandbox.REGION_SIZE + region_cell_x;
+                TileMap map = TileMapLayers[layer];
+                
+                if(region.CellBlockInstances.ContainsKey(index)) {
+                    region.CellBlockInstances.Remove(index);
+                    map.CallDeferred("set_cell",x,y,TileMap.InvalidCell);
+                }
+
+            }
+            node.QueueFree();
         }
 
         public ISandboxRegion GetRegion(int rx,int ry) {

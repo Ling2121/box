@@ -62,7 +62,7 @@ namespace Box.Components {
         }
 
         public void _MouseExited() {
-            if(Select == this) {
+            if(Select == Parent) {
                 Select = null;
             }
         }
