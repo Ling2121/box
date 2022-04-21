@@ -6,6 +6,9 @@ namespace Box
     [ClassName(nameof(TimeSystem))]
     public class TimeSystem : Timer
     {
+        [Signal]
+        public delegate void minute_step();
+
         public const int SECONDS_LENGHT = 60;
         public const int MINUTE_LENGHT = 60;
         public const int HOUR_LENGHT = 60;//1小时 = 60分钟
@@ -13,6 +16,8 @@ namespace Box
         public const int WEEK_LENGHT = 7;//1周 = 7天
         public const int MONTH_LENGHT = 30;//1月 = 30天
         public const int YEAR_LENGHT = 14;//1年=14月
+
+        public const int HOUR_SECONDS = DAY_LENGHT * HOUR_LENGHT;
 
         [Export]//基准秒(现实秒数为单位)。1基准秒=1游戏秒
         public float BenchmarkTime = 0.01f;
@@ -49,15 +54,15 @@ namespace Box
             Connect("timeout",this,nameof(_Timeout));
         }
 
-        public void _Timeout(float dt)
+        public override string ToString()
         {
-            Seconds++;
+            return $"{this.Year}:{this.Month}:{this.Day}   {this.Hour}:{this.Minute}";
+        }
 
-            if(Seconds > SECONDS_LENGHT) {
-                //分进
-                Seconds = 0;
-                Minute++;
-            }
+        public void _Timeout()
+        {
+            Minute++;
+            EmitSignal(nameof(minute_step));
 
             //时进
             if(Minute >= HOUR_LENGHT)

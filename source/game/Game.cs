@@ -3,5 +3,6 @@ namespace Box {
         public Sandbox Sandbox;
         public TimeSystem TimeSystem;
         public EventManager EventManager;
+        public DiurnalCycleSystem DiurnalCycleSystem;
     }
 }

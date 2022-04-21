@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://source/nodes/sandbox/Sandbox.cs" type="Script" id=1]
 [ext_resource path="res://test/block_test/Start.cs" type="Script" id=2]
@@ -6,25 +6,52 @@
 [ext_resource path="res://source/game/event/EventManager.cs" type="Script" id=4]
 [ext_resource path="res://source/nodes/entities/lifes/spine_man/SpineMan.tscn" type="PackedScene" id=5]
 [ext_resource path="res://test/entity_test/TestBlock.tscn" type="PackedScene" id=6]
+[ext_resource path="res://source/nodes/sandbox/systems/diurnal_cycle_system/DiurnalCycleSystem.cs" type="Script" id=7]
+[ext_resource path="res://source/nodes/sandbox/systems/time_system/TimeSystem.cs" type="Script" id=8]
+[ext_resource path="res://source/shader/light.shader" type="Shader" id=9]
+[ext_resource path="res://icon.png" type="Texture" id=10]
+
+[sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 9 )
+shader_param/light_color = Plane( 1, 1, 1, 1 )
+shader_param/light_intensity = 0.5
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource( 2 )
 
 [node name="Sandbox" type="YSort" parent="."]
+material = SubResource( 1 )
 script = ExtResource( 1 )
+
+[node name="Icon" type="Sprite" parent="Sandbox"]
+use_parent_material = true
+position = Vector2( 386, -39 )
+scale = Vector2( 5.97656, 4.83594 )
+texture = ExtResource( 10 )
 
 [node name="EventManager" type="Node" parent="Sandbox"]
 script = ExtResource( 4 )
 
+[node name="TimeSystem" type="Timer" parent="Sandbox"]
+script = ExtResource( 8 )
+BenchmarkTime = 0.01
+
+[node name="DiurnalCycleSystem" type="Node" parent="Sandbox"]
+script = ExtResource( 7 )
+
 [node name="SpineMan" parent="Sandbox" instance=ExtResource( 5 )]
+use_parent_material = true
 position = Vector2( 92, -78 )
 
 [node name="Player" parent="Sandbox" instance=ExtResource( 3 )]
+use_parent_material = true
 position = Vector2( 197, -6 )
 
 [node name="Camera2D" type="Camera2D" parent="Sandbox/Player"]
+use_parent_material = true
 current = true
 zoom = Vector2( 0.5, 0.5 )
 
 [node name="Node2D" parent="Sandbox" instance=ExtResource( 6 )]
+use_parent_material = true
 position = Vector2( 97, -8 )
