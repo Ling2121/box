@@ -8,13 +8,12 @@ using EndConditionFunc = System.Func<Box.Components.InterplayComponent.Interplay
 namespace Box.Components {
     [ClassName(nameof(InterplayComponent))]
     public class InterplayComponent : Area2D,IComponent {
-        public class InterplayItem : Godot.Object {
+        public class InterplayItem : Godot.Reference {
             public InterplayType Type;
             public Node EmitObject;
             public Node ReceiveObject;
             public Node Item;
             public EndConditionFunc EndCondition = item =>{return true;};
-
             public InterplayItem(){}
 
             public InterplayItem(InterplayType type,Node emit,Node receive,Node item) {
@@ -111,6 +110,7 @@ namespace Box.Components {
 
         public void LongInterplayEnd(InterplayItem item) {
             if(LongInterplayTable.ContainsKey(item)){
+
                 LongInterplayTable.Remove(item);
 
                 Game.Instance.EventManager.PublishEvent(nameof(LongInterplayEvent),item);

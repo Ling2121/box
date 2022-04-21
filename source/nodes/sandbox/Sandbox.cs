@@ -237,7 +237,7 @@ namespace Box {
             return region.CellBlockInstances[index];
         }
 
-        public void FreeBlockInstances(Node node) {
+        public void FreeBlockInstances(Node node) {                           
             if(node is ICellBlock) {
                 ICellBlock block = node as ICellBlock;
                 SandboxLayer layer = block.Layer;
