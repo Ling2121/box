@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://source/nodes/sandbox/Sandbox.cs" type="Script" id=1]
 [ext_resource path="res://test/block_test/Start.cs" type="Script" id=2]
 [ext_resource path="res://source/nodes/entities/lifes/player/Player.tscn" type="PackedScene" id=3]
 [ext_resource path="res://source/game/event/EventManager.cs" type="Script" id=4]
 [ext_resource path="res://source/nodes/entities/lifes/spine_man/SpineMan.tscn" type="PackedScene" id=5]
+[ext_resource path="res://test/entity_test/TestBlock.tscn" type="PackedScene" id=6]
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource( 2 )
@@ -24,3 +25,6 @@ position = Vector2( 197, -6 )
 [node name="Camera2D" type="Camera2D" parent="Sandbox/Player"]
 current = true
 zoom = Vector2( 0.5, 0.5 )
+
+[node name="Node2D" parent="Sandbox" instance=ExtResource( 6 )]
+position = Vector2( 97, -8 )

@@ -47,7 +47,7 @@ namespace Box.Components {
         {
             Parent = GetParent();
             Connect("mouse_entered",this,nameof(_MouseEntered));
-            Connect("mouse_entered",this,nameof(_MouseExited));
+            Connect("mouse_exited",this,nameof(_MouseExited));
         }
         
         public override void _ExitTree() {
