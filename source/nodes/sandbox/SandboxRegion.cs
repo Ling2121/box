@@ -24,9 +24,10 @@ namespace Box {
         public Dictionary<Node,Node> Objects {get;} = new Dictionary<Node, Node>();
     
         public Dictionary<SandboxLayer,int[,]> Layers {get;} = new Dictionary<SandboxLayer, int[,]>();
+        public Dictionary<SandboxLayer,Dictionary<int,Table>> CellInfoTables = new Dictionary<SandboxLayer, Dictionary<int, Table>>();
         public Dictionary<int,IBlock> CellBlockInstances {get;} = new Dictionary<int, IBlock>();
 
-        public NumberIndexPool IndexPool = new NumberIndexPool();
+        public NumberIndexPool IndexPool = new NumberIndexPool(); 
 
         public Sandbox Sandbox;
 
@@ -70,6 +71,21 @@ namespace Box {
                 Layers[layer][x,y] = -1;
             }
             
+        }
+
+        public Table GetCellInfoTable(ICellBlock block) {
+            return GetCellInfoTable(block.Layer,block.X,block.Y);
+        }
+
+        public Table GetCellInfoTable(SandboxLayer layer,int x,int y) {
+            var index = (Sandbox.REGION_SIZE * y) + x;
+            if(index < 0 || index >= Sandbox.REGION_CELL_COUNT) return null;
+
+            var lay = CellInfoTables[layer];
+            if(!lay.ContainsKey(index)) {
+                lay[index] = new Table();
+            }
+            return lay[index];
         }
 
         public void StorageWrite(IStorageFile file) {

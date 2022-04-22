@@ -4,5 +4,6 @@ namespace Box {
         public TimeSystem TimeSystem;
         public EventManager EventManager;
         public DiurnalCycleSystem DiurnalCycleSystem;
+        public GrowSystem GrowSystem;
     }
 }

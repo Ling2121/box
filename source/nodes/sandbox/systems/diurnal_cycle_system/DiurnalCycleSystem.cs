@@ -26,10 +26,10 @@ namespace Box {
 
         public override void _EnterTree()
         {
-            int night   = (int)(TimeSystem.DAY_LENGHT * 0.2500f+0.5f) * TimeSystem.HOUR_LENGHT;
-            int sunset  = (int)(TimeSystem.DAY_LENGHT * 0.2916f+0.5f) * TimeSystem.HOUR_LENGHT;
-            int daytime = (int)(TimeSystem.DAY_LENGHT * 0.7500f+0.5f) * TimeSystem.HOUR_LENGHT;
-            int sunrise = (int)(TimeSystem.DAY_LENGHT * 1.0000f+0.5f) * TimeSystem.HOUR_LENGHT;
+            int night   = (int)(TimeSystem.DAY_HOUR * 0.2500f+0.5f) * TimeSystem.HOUR_MINUTE;
+            int sunset  = (int)(TimeSystem.DAY_HOUR * 0.2916f+0.5f) * TimeSystem.HOUR_MINUTE;
+            int daytime = (int)(TimeSystem.DAY_HOUR * 0.7500f+0.5f) * TimeSystem.HOUR_MINUTE;
+            int sunrise = (int)(TimeSystem.DAY_HOUR * 1.0000f+0.5f) * TimeSystem.HOUR_MINUTE;
 
             PeriodOfTimeInterval[PeriodOfTime.Night]    = night;
             PeriodOfTimeInterval[PeriodOfTime.Sunset]   = sunset;
@@ -64,7 +64,7 @@ namespace Box {
         }
 
         public void _MinuteStep() {
-            int minute = (TimeSystem.Hour * TimeSystem.HOUR_LENGHT) + TimeSystem.Minute;
+            int minute = (TimeSystem.Hour * TimeSystem.HOUR_MINUTE) + TimeSystem.Minute;
             foreach(var item in PeriodOfTimeInterval) {
                 if(item.Value > minute) {
                     GD.Print(TimeSystem);

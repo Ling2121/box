@@ -13,6 +13,7 @@ namespace Box {
 
         public const int REGION_CELL_PIXEL_SIZE = 16;
         public const int REGION_SIZE = 16;
+        public const int REGION_CELL_COUNT = REGION_SIZE * REGION_SIZE;
         public const int REGION_PIXEL_SIZE = REGION_CELL_PIXEL_SIZE * REGION_SIZE;
 
         public static (int,int) WorldToRegion(float x,float y) {
