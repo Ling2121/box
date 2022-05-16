@@ -12,7 +12,7 @@ namespace Box.Test.EntityTest {
             
         }
         //被破坏时触发
-        public void _Damage(Node entity) {}
+        public void _DamageStart(Node entity) {}
         //破坏完毕时触发
         public void _DamageComplete(Node entity) {}
     }

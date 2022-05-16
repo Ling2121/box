@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using Godot;
 using System;
 using System.Diagnostics;
@@ -11,6 +12,7 @@ namespace Box.Components {
             public DamageComponentError():base("DamageComponent只能放在Block下") {}
         }
         protected Node Block;
+        protected IBlock IBlock;
         protected Stopwatch timer = new Stopwatch();
         protected float time;
 
@@ -22,6 +24,7 @@ namespace Box.Components {
             if(!(Block is IBlock)) {
                 throw new DamageComponentError();
             }
+            IBlock = Block as IBlock;
             InterplayComponent = EntityHelper.GetComponent<InterplayComponent>(Block);
             IBlock block = Block as IBlock;
             time = (block.Hardness * DamageBaseTime) * 1000;
@@ -34,12 +37,14 @@ namespace Box.Components {
                 return timer.ElapsedMilliseconds >= time;
             };
             timer.Start();
+            IBlock._DamageStart(item.EmitObject);
         }
 
         public void _ReceiveLongInterplayEnd(InterplayComponent.InterplayItem item) {
             if(timer.ElapsedMilliseconds >= time) {
                 timer.Stop();
                 timer.Reset();
+                IBlock._DamageComplete(item.EmitObject);
                 Game.Instance.Sandbox.FreeBlockInstances(Block);
             } else {
                 timer.Stop();

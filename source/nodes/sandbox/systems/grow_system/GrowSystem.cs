@@ -28,8 +28,8 @@ namespace Box {
 
             int stage = grow.Stage;
             int next_stage = stage + 1;
-            if(next_stage >= grow.Stages.Count) return false;
-            long next_stage_t = grow.Stages[next_stage];
+            if(next_stage >= grow.StageSetting.Count) return false;
+            long next_stage_t = grow.StageSetting[next_stage];
             item.NextTimestamp = item.Timestamp + next_stage_t;
 
             return true;
@@ -49,7 +49,7 @@ namespace Box {
         public void _MinuteStep() {
             long ct = TimeSystem.Timestamp;
             for(int i = 0;i < GrowItems.Count;i++) {
-                GrowItem item = GrowItems[i];
+                GrowItem item = GrowItems[i];             
                 if(ct >= item.NextTimestamp) {
                     item.Object.Stage++;
                     item.Object._EnterNextStage(item.Object.Stage);
