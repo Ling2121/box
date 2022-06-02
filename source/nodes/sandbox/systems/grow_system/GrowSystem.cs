@@ -2,6 +2,7 @@ using Godot;
 using System.Collections.Generic;
 
 namespace Box {
+    [ClassName(nameof(GrowSystem))]
     public class GrowSystem : Node {
         public class GrowItem {
             public IGrow Object;
@@ -27,11 +28,11 @@ namespace Box {
             IGrow grow = item.Object;
 
             int stage = grow.Stage;
-            int next_stage = stage + 1;
+            int next_stage = stage;
             if(next_stage >= grow.StageSetting.Count) return false;
             long next_stage_t = grow.StageSetting[next_stage];
-            item.NextTimestamp = item.Timestamp + next_stage_t;
-
+            item.NextTimestamp = item.NextTimestamp + next_stage_t;
+            
             return true;
         }
 
@@ -39,7 +40,7 @@ namespace Box {
             GrowItem item = new GrowItem();
             item.Object = grow;
             item.Timestamp = TimeSystem.Timestamp;
-            
+            item.NextTimestamp =  item.Timestamp;
             if(UpdateNextTimestamp(item)) {
                 GrowItems.Add(item);
             }

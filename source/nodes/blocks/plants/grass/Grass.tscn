@@ -1,0 +1,24 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://source/nodes/blocks/plants/grass/Grass.cs" type="Script" id=1]
+[ext_resource path="res://source/components/block/DamageComponent.cs" type="Script" id=2]
+[ext_resource path="res://source/components/GrowComponent.cs" type="Script" id=3]
+[ext_resource path="res://source/components/interplay/InterplayComponent.cs" type="Script" id=4]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 8, 8 )
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="DamageComponent" type="Node" parent="."]
+script = ExtResource( 2 )
+
+[node name="GrowComponent" type="Node" parent="."]
+script = ExtResource( 3 )
+
+[node name="InterplayComponent" type="Area2D" parent="."]
+script = ExtResource( 4 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InterplayComponent"]
+shape = SubResource( 1 )

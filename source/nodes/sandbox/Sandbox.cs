@@ -67,12 +67,6 @@ namespace Box {
         public ConcurrentQueue<(int x,int y)> RegionLoadInstructQueue {get;protected set;} = new ConcurrentQueue<(int x,int y)>();
         //区块卸载队列
         public ConcurrentQueue<(int x,int y)> RegionUnloadInstructQueue {get;protected set;} = new ConcurrentQueue<(int x,int y)>();
-        public TileMap LandTileMap {get {
-            return TileMapLayers[SandboxLayer.Land];
-        }}
-        public TileMap WallTileMap {get {
-            return TileMapLayers[SandboxLayer.Wall];
-        }}
         public Dictionary<SandboxLayer,TileMap> TileMapLayers = new Dictionary<SandboxLayer, TileMap>();
         //地图加载器
         public SanboxLoader SanboxLoader; 
@@ -190,6 +184,14 @@ namespace Box {
             return (region,region_cell_x_local,region_cell_y_local);
         }
 
+        public void SetCellTile(SandboxLayer layer,int x,int y,string tile_name) {
+            TileMap map = TileMapLayers[layer];
+            int tile_id = map.TileSet.FindTileByName(tile_name);
+            (SandboxRegion region,int region_cell_x,int region_cell_y) = CellOfLocal(x,y);
+            
+            map.CallDeferred("set_cell",x,y,tile_id);
+        }
+
         public void SetCell(SandboxLayer layer,int x,int y,string tile_name) {
             TileMap map = TileMapLayers[layer];
             int tile_id = map.TileSet.FindTileByName(tile_name);
@@ -199,19 +201,17 @@ namespace Box {
             region.Layers[layer][region_cell_x,region_cell_y] = region.IndexPool.GetIndex(tile_name);
         }
 
-        public IBlock GetCellBlockInstance(SandboxLayer layer,int x,int y) {
+        public IBlock  SetCellBlockInstance(SandboxLayer layer,int x,int y,string tile_name) {
             (SandboxRegion region,int region_cell_x,int region_cell_y) = CellOfLocal(x,y);
             TileMap map = TileMapLayers[layer];
             int index = region_cell_y * Sandbox.REGION_SIZE + region_cell_x;
             if(region.CellBlockInstances.ContainsKey(index)) {
-                return region.CellBlockInstances[index];
+                
             }
-            int tile_id = map.GetCell(x,y);
-            if(tile_id == TileMap.InvalidCell) return null;
-            string tile_name = map.TileSet.TileGetName(tile_id);
+
             Register register = Register.Instance;
             Node instance = register.CreateBlock(register.GetTileBindBlockName(tile_name));
-            
+
             if(instance == null) return null;
 
             if(!(instance is ICellBlock)) {
@@ -235,6 +235,13 @@ namespace Box {
                 }
                 AddChild(instance);
             }
+            return region.CellBlockInstances[index];
+        }
+
+        public IBlock GetCellBlockInstance(SandboxLayer layer,int x,int y) {
+            (SandboxRegion region,int region_cell_x,int region_cell_y) = CellOfLocal(x,y);
+            TileMap map = TileMapLayers[layer];
+            int index = region_cell_y * Sandbox.REGION_SIZE + region_cell_x;
             return region.CellBlockInstances[index];
         }
 

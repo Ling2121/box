@@ -9,10 +9,11 @@ namespace Box.Test.BlockTest {
         public override void _Ready()
         {
             sandbox = GetNode<Sandbox>("Sandbox");
-            for(int x = 0;x < 16;x++) {
-                for(int y = 0;y < 16;y++) {
-                    sandbox.SetCell(SandboxLayer.Land,x,y,"sand");
-                    sandbox.SetCell(SandboxLayer.Wall,x,y,"thorns");
+            for(int x = 0;x < 2;x++) {
+                for(int y = 0;y < 2;y++) {
+                    sandbox.SetCell(SandboxLayer.Land,x,y,"grass");
+                    Node node = sandbox.SetCellBlockInstance(SandboxLayer.Land,x,y,"grass") as Node;
+                    //sandbox.SetCell(SandboxLayer.Wall,x,y,"thorns");
                 }
             }
         }

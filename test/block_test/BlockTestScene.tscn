@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://source/nodes/sandbox/Sandbox.cs" type="Script" id=1]
 [ext_resource path="res://test/block_test/Start.cs" type="Script" id=2]
@@ -10,6 +10,7 @@
 [ext_resource path="res://source/nodes/sandbox/systems/time_system/TimeSystem.cs" type="Script" id=8]
 [ext_resource path="res://source/shader/light.shader" type="Shader" id=9]
 [ext_resource path="res://icon.png" type="Texture" id=10]
+[ext_resource path="res://source/nodes/sandbox/systems/grow_system/GrowSystem.cs" type="Script" id=11]
 
 [sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 9 )
@@ -39,6 +40,9 @@ BenchmarkTime = 0.01
 [node name="DiurnalCycleSystem" type="Node" parent="Sandbox"]
 script = ExtResource( 7 )
 
+[node name="GrowSystem" type="Node" parent="Sandbox"]
+script = ExtResource( 11 )
+
 [node name="SpineMan" parent="Sandbox" instance=ExtResource( 5 )]
 use_parent_material = true
 position = Vector2( 92, -78 )
@@ -49,8 +53,9 @@ position = Vector2( 197, -6 )
 
 [node name="Camera2D" type="Camera2D" parent="Sandbox/Player"]
 use_parent_material = true
+position = Vector2( -102, 37 )
 current = true
-zoom = Vector2( 0.5, 0.5 )
+zoom = Vector2( 0.2, 0.2 )
 
 [node name="Node2D" parent="Sandbox" instance=ExtResource( 6 )]
 use_parent_material = true

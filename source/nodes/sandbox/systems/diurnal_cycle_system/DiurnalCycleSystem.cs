@@ -67,7 +67,6 @@ namespace Box {
             int minute = (TimeSystem.Hour * TimeSystem.HOUR_MINUTE) + TimeSystem.Minute;
             foreach(var item in PeriodOfTimeInterval) {
                 if(item.Value > minute) {
-                    GD.Print(TimeSystem);
                     if(CurrentPeriodOfTime != item.Key) {
                         CurrentPeriodOfTime = item.Key;
                         UpdateLight();
