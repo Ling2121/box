@@ -19,14 +19,18 @@ namespace Box.WorldBuilds.VoronoiPort {
         }
 
         public void Build(VoronoiWorldBuilderData data) {
-            // int width = data.Width;
-            // int height = data.Height;
-            // RandomNumberGenerator random = data.Random;
-            // int point_number = data.GetProcessDataOr<int>(ProcessName,"顶点数",(int)((width + height) * 0.233));
+            int width = data.Width;
+            int height = data.Height;
+            RandomNumberGenerator random = data.Random;
+            int point_number = data.顶点生成数;// (int)((width + height) * 0.233);
 
-            // Voronoi voronoi = new Voronoi(GenPoints(random,width,height,point_number));
+            Voronoi voronoi = new Voronoi(GenPoints(random,width,height,point_number));
 
-            // data.SetProcessData(ProcessName,"Voronoi",voronoi);
+            data.Voronoi = voronoi;
+
+            foreach(var item in voronoi.Cells) {
+                data.细胞数据[item.Key] = new VoronoiCellBuildData();
+            }
         }
     }
 }

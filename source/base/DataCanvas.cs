@@ -22,13 +22,13 @@ namespace Box {
         public readonly int Width;
         public readonly int Height;
 
-        protected SKBitmap Bitmap;
-        protected SKCanvas Canvas;
+        public SKBitmap Bitmap;
+        public SKCanvas Canvas;
 
-        SKPaint LinePaint = new SKPaint {
+        public SKPaint LinePaint = new SKPaint {
             Style = SKPaintStyle.Stroke,
         };
-        SKPaint FillPaint = new SKPaint {
+        public SKPaint FillPaint = new SKPaint {
             Style = SKPaintStyle.Fill
         };
 
@@ -91,7 +91,7 @@ namespace Box {
             for(int y = 0;y < Width;y++) {
                 for(int x = 0;x < Height;x++) {
                     var color = Bitmap.GetPixel(x,y);
-                    image.SetPixel(x,y,new Godot.Color(color.Red,color.Green,color.Blue,color.Alpha));
+                    image.SetPixel(x,y,Godot.Color.Color8(color.Red,color.Green,color.Blue,color.Alpha));
                 }
             }
 
