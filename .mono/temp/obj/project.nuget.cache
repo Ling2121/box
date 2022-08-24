@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "dgSpecHash": "L+g/xLal1dEBgf8+2PT7eRGEAkbyhtOgt6yUkpcYy0i9cqItUzBRIxLebNjvBQ2W8/xIPE8HvCIcEmKoWnP4SA==",
+  "success": true,
+  "projectFilePath": "D:\\Development\\Projects\\Godot\\Box\\Box.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Ling_2121\\.nuget\\packages\\delaunator\\1.0.9\\delaunator.1.0.9.nupkg.sha512",
+    "C:\\Users\\Ling_2121\\.nuget\\packages\\skiasharp\\2.88.0\\skiasharp.2.88.0.nupkg.sha512",
+    "C:\\Users\\Ling_2121\\.nuget\\packages\\skiasharp.nativeassets.macos\\2.88.0\\skiasharp.nativeassets.macos.2.88.0.nupkg.sha512",
+    "C:\\Users\\Ling_2121\\.nuget\\packages\\skiasharp.nativeassets.win32\\2.88.0\\skiasharp.nativeassets.win32.2.88.0.nupkg.sha512",
+    "C:\\Users\\Ling_2121\\.nuget\\packages\\system.buffers\\4.4.0\\system.buffers.4.4.0.nupkg.sha512",
+    "C:\\Users\\Ling_2121\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512",
+    "C:\\Users\\Ling_2121\\.nuget\\packages\\system.numerics.vectors\\4.4.0\\system.numerics.vectors.4.4.0.nupkg.sha512",
+    "C:\\Users\\Ling_2121\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.5.2\\system.runtime.compilerservices.unsafe.4.5.2.nupkg.sha512"
+  ],
+  "logs": []
+}
