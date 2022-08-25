@@ -13,6 +13,12 @@ namespace Box.WorldBuilds.VoronoiPort {
     
     public class VoronoiCellBuildData {
         public VoronoiCellType Type;
+        public int Height;
+        public bool IsInland = false;//是否是内陆
+        public bool IsCoastline = false;//是否是海岸线
+        public bool IsFoot = false;//是否在山脚下
+        public bool IsLake = false;
+        public bool IsLava = false;
     }
 
     public class VoronoiWorldBuilderData : IBuildData {
@@ -39,11 +45,12 @@ namespace Box.WorldBuilds.VoronoiPort {
         };
 
         //生成配置
-        public Voronoi Voronoi; 
+        public Voronoi Voronoi;
 
-        public Dictionary<long,Cell> 陆地Voronoi细胞 = new Dictionary<long, Cell>();
-        public Dictionary<long,Cell> 海洋Voronoi细胞 = new Dictionary<long, Cell>();
-        public Dictionary<long,VoronoiCellBuildData> 细胞数据 = new Dictionary<long, VoronoiCellBuildData>();
+        public Dictionary<long,Cell> LandVoronoiCells = new Dictionary<long, Cell>();
+        public Dictionary<long,Cell> WaterVoronoiCells = new Dictionary<long, Cell>();
+        public Dictionary<long,Cell> MountainVoronoiCells = new Dictionary<long, Cell>();
+        public Dictionary<long,VoronoiCellBuildData> VoronoiCellDatas = new Dictionary<long, VoronoiCellBuildData>();
 
         public int 顶点生成数;
 

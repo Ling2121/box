@@ -5,6 +5,7 @@ namespace Box.VoronoiMap {
     public class Cell {
         public List<Vertex> Vertices = new List<Vertex>();
         public List<Edge> Edges = new List<Edge>();
+        public List<Cell> Regions = new List<Cell>();
         public Vertex IndexPoint;
 
         public Vector2[] VerticesToVectorArray() {

@@ -61,6 +61,15 @@ namespace Box.VoronoiMap {
                 
                 Cells[hash] = cell;
             });
+
+            foreach(Cell cell in Cells.Values) {
+                foreach(Edge edge in cell.Edges) {
+                    Cell region_cell = edge.C1 == cell ? edge.C2 : edge.C1;
+                    if(region_cell != null) {
+                        cell.Regions.Add(region_cell);
+                    }
+                }
+            }
         }
 
         protected Vertex GetVertexOrCreate(int x,int y) {
