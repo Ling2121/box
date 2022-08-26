@@ -27,8 +27,8 @@ namespace Box.VoronoiMap {
                 Vertex current;
                 Vertex up = GetVertexOrCreate((int)c.Points[0].X,(int)c.Points[0].Y);
                 Edge edge;
-                double cx = up.x;
-                double cy = up.y;
+                float cx = up.x;
+                float cy = up.y;
                 cell.Vertices.Add(up);
                 for(int i = 1;i<c.Points.Length;i++) {
                     current_point = c.Points[i];
@@ -37,10 +37,8 @@ namespace Box.VoronoiMap {
                     edge = GetEdgeOrCreate(up,current);
                     if(edge.C1 == null) {
                         edge.C1 = cell;
-                    } else {
-                        if(edge.C2 == null) {
-                            edge.C2 = cell;
-                        }
+                    } else if(edge.C2 == null) {
+                        edge.C2 = cell;
                     }
                     
                     cell.Edges.Add(edge);
@@ -50,13 +48,19 @@ namespace Box.VoronoiMap {
                     cx += current.x;
                     cy += current.y;
                 }
-                edge = GetEdgeOrCreate(up,GetVertexOrCreate((int)c.Points[0].X,(int)c.Points[0].Y));
+
+                edge = GetEdgeOrCreate(up,GetVertexOrCreate((float)c.Points[0].X,(float)c.Points[0].Y));
+                if(edge.C1 == null) {
+                    edge.C1 = cell;
+                } else if(edge.C2 == null) {
+                    edge.C2 = cell;
+                }
                 cell.Edges.Add(edge);
 
                 cx = cx / c.Points.Length;
                 cy = cy / c.Points.Length;
 
-                cell.IndexPoint = GetVertexOrCreate((int)cx,(int)cy);
+                cell.IndexPoint = GetVertexOrCreate(cx,cy);
                 long hash = cell.IndexPoint.GetHashValue();
                 
                 Cells[hash] = cell;
@@ -64,7 +68,14 @@ namespace Box.VoronoiMap {
 
             foreach(Cell cell in Cells.Values) {
                 foreach(Edge edge in cell.Edges) {
-                    Cell region_cell = edge.C1 == cell ? edge.C2 : edge.C1;
+                    Cell region_cell = edge.C1;
+                    if(region_cell == null || region_cell == cell) {
+                        region_cell = edge.C2;
+                    }
+                    if(region_cell == cell) {
+                        region_cell = null;
+                    }
+
                     if(region_cell != null) {
                         cell.Regions.Add(region_cell);
                     }
@@ -72,7 +83,7 @@ namespace Box.VoronoiMap {
             }
         }
 
-        protected Vertex GetVertexOrCreate(int x,int y) {
+        protected Vertex GetVertexOrCreate(float x,float y) {
             long hash = Vertex.ToHashValue(x,y);
             if(!Vertices.ContainsKey(hash)) {
                 Vertices[hash] = new Vertex(x,y);
@@ -82,7 +93,8 @@ namespace Box.VoronoiMap {
 
         protected Edge GetEdgeOrCreate(Vertex p1,Vertex p2) {
             Vector2 c = (p1.Position + p2.Position) / 2;
-            Vertex edge_index_point = GetVertexOrCreate((int)c.x,(int)c.y);
+            Vertex edge_index_point = GetVertexOrCreate(c.x,c.y);
+
             long hash = Vertex.ToHashValue(edge_index_point.x,edge_index_point.y);
             if(!Edges.ContainsKey(hash)) {
                 Edge edge = new Edge();

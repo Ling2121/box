@@ -6,6 +6,10 @@ namespace Box.VoronoiMap {
             return (long)x | ((long)y << 32);
         }
 
+        public static long ToHashValue(float x,float y) {
+            return (long)(x - 0.5f) | ((long)(y - 0.5f) << 32);
+        }
+
         public Vector2 Position = new Vector2();
         public Vertex Next;
         public Vertex Up;
@@ -33,6 +37,11 @@ namespace Box.VoronoiMap {
         public Vertex(){}
 
         public Vertex(int x,int y) {
+            Position.x = x;
+            Position.y = y;
+        }
+
+        public Vertex(float x,float y) {
             Position.x = x;
             Position.y = y;
         }

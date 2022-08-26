@@ -122,7 +122,7 @@ public class BuildTerrainTestScene : Node2D
 
     public override void _Ready()
     {
-        Seed = 2333;
+        Seed = 23333;
         Octaves = 3;
         Period = 55;
         Persistence = 0.5f;
@@ -132,6 +132,10 @@ public class BuildTerrainTestScene : Node2D
         PointNumber = 200;
         MountainHeight = 80;
         LandHeight = 10;
+        BuildData.湖泊生成尝试数 = 5;
+        BuildData.湖泊生成几率 = 100;
+        BuildData.火山湖生成尝试数 = 2;
+        BuildData.火山湖生成几率 = 100;
         Build();
     }
 

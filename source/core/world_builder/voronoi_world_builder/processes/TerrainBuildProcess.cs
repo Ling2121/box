@@ -28,10 +28,10 @@ namespace Box.WorldBuilds.VoronoiPort {
                 }
             }
 
-            foreach(var item in data.VoronoiCellDatas) {
+            foreach(var item in data.LandVoronoiCells) {
                 var cell_index = item.Key;
-                var cell_data = item.Value;
-                var cell = data.Voronoi.Cells[cell_index];
+                var cell_data =  data.VoronoiCellDatas[cell_index];
+                var cell = item.Value;
 
                 foreach(Cell region_cell in cell.Regions) {
                     var rergion_cell_data = data.VoronoiCellDatas[region_cell.IndexPoint.GetHashValue()];
@@ -47,40 +47,10 @@ namespace Box.WorldBuilds.VoronoiPort {
                     }
                 }
 
-                if(!cell_data.IsCoastline) {
+                if(cell_data.Type != VoronoiCellType.Water && !cell_data.IsCoastline) {
                     cell_data.IsInland = true;
                 }
             }
-
-
-            #if DEBUG
-
-            DataCanvas canvas = null;
-            if(data.Canvases.ContainsKey("terrain_canvas1")) {
-                canvas = data.Canvases["terrain_canvas1"];
-            } else {
-                canvas = new DataCanvas(data.Width,data.Height);
-                data.Canvases["terrain_canvas1"] = canvas;
-            }
-            foreach(var item in data.VoronoiCellDatas) {
-                var cell_index = item.Key;
-                var cell_data = item.Value;
-                var cell = data.Voronoi.Cells[cell_index];
-                uint color = 0;
-                if(cell_data.Type == VoronoiCellType.Land) {
-                    color = 0xff6abe30;
-                }
-                if(cell_data.Type == VoronoiCellType.Water) {
-                    color = 0xff5fcde4;
-                }
-                if(cell_data.Type == VoronoiCellType.Mountain) {
-                    color = 0xff595652;
-                }
-                canvas.DrawPolygon(color,cell.VerticesToVectorArray(),true);
-                canvas.DrawCircle(0xffffffff,cell.IndexPoint.Position,2,true);
-            }
-
-            #endif
         }
 
         protected Cell RandomSelectCell(VoronoiWorldBuilderData data,Dictionary<long,Cell> table,Func<Cell,bool> is_func) {
@@ -113,13 +83,13 @@ namespace Box.WorldBuilds.VoronoiPort {
             //条件
             // 1.只会在内陆生成
             // 2.只会在山脉以及附近生成
-            // 3.不会在湖泊旁边生成
+            // 3.不会在湖泊邻近生成
             TryBuildLake(data,data.火山湖生成几率,data.火山湖生成尝试数,
                 c => {
                     bool region_is_lake = false;
                     foreach(Cell rc in c.Regions) {
                         var rcd = data.VoronoiCellDatas[rc.IndexPoint.GetHashValue()];
-                        if(rcd.IsLake) {
+                        if(rcd.IsLake || rcd.Type == VoronoiCellType.Water) {
                             region_is_lake = true;
                             break;
                         }
@@ -130,20 +100,21 @@ namespace Box.WorldBuilds.VoronoiPort {
                     return cd.IsInland && (cd.Type == VoronoiCellType.Mountain || cd.IsFoot);
                 },
                 c => {
-
+                    var cd = data.VoronoiCellDatas[c.IndexPoint.GetHashValue()];
+                    cd.IsLava = true;
                 }
             );
 
             //生成湖泊
             //条件
             // 1.只会在内陆生成
-            // 2.不会在岩浆湖旁边生成
-            TryBuildLake(data,data.火山湖生成几率,data.火山湖生成尝试数,
+            // 2.不会在岩浆湖邻近生成
+            TryBuildLake(data,data.湖泊生成几率,data.湖泊生成尝试数,
                 c => {
                     bool region_is_lava = false;
                     foreach(Cell rc in c.Regions) {
                         var rcd = data.VoronoiCellDatas[rc.IndexPoint.GetHashValue()];
-                        if(rcd.IsLava) {
+                        if(rcd.IsLava || rcd.Type == VoronoiCellType.Water) {
                             region_is_lava = true;
                             break;
                         }
@@ -154,15 +125,63 @@ namespace Box.WorldBuilds.VoronoiPort {
                     return cd.IsInland;
                 },
                 c => {
-                    
+                    var cd = data.VoronoiCellDatas[c.IndexPoint.GetHashValue()];
+                    cd.IsLake = true;
                 }
             );
 
 
         }
 
+        public void BuildRiver() {
+            //湖泊类型
+            //  1.普通湖泊
+            //      1.1山脉泉眼为起始
+            //      1.2湖泊为起始
+            //  2.岩浆湖泊
+        }
+
         public void Build(VoronoiWorldBuilderData data) {
             BuildWaterAndLand(data);
+            BuildLakes(data);
+
+            #if DEBUG
+
+            DataCanvas canvas = null;
+            if(data.Canvases.ContainsKey("terrain_canvas1")) {
+                canvas = data.Canvases["terrain_canvas1"];
+            } else {
+                canvas = new DataCanvas(data.Width,data.Height);
+                data.Canvases["terrain_canvas1"] = canvas;
+            }
+            foreach(var item in data.VoronoiCellDatas) {
+                var cell_index = item.Key;
+                var cell_data = item.Value;
+                var cell = data.Voronoi.Cells[cell_index];
+                uint color = 0;
+                if(cell_data.Type == VoronoiCellType.Land) {
+                    color = 0xff6abe30;
+                    if(cell_data.IsInland) {
+                        color = 0xff478819;
+                    }
+                }
+                if(cell_data.Type == VoronoiCellType.Water) {
+                    color = 0xff5fcde4;
+                }
+                if(cell_data.Type == VoronoiCellType.Mountain) {
+                    color = 0xff595652;
+                }
+                if(cell_data.IsLake) {
+                    color = 0xff5b6ee1;
+                }
+                if(cell_data.IsLava) {
+                    color = 0xffff471c;
+                }
+                canvas.DrawPolygon(color,cell.VerticesToVectorArray(),true);
+                canvas.DrawCircle(0xffffffff,cell.IndexPoint.Position,2,true);
+            }
+
+            #endif
         }
     }
 }
