@@ -13,12 +13,14 @@ namespace Box.WorldBuilds.VoronoiPort {
     
     public class VoronoiCellBuildData {
         public VoronoiCellType Type;
-        public int Height;
+        public int Height;//高度
+        public int Humidity;//湿度
+        public int Temperature;//温度
         public bool IsInland = false;//是否是内陆
         public bool IsCoastline = false;//是否是海岸线
         public bool IsFoot = false;//是否在山脚下
-        public bool IsLake = false;
-        public bool IsLava = false;
+        public bool IsLake = false;//是否是湖泊
+        public bool IsLava = false;//是否是熔岩湖
     }
 
     public class VoronoiWorldBuilderData : IBuildData {
@@ -47,28 +49,29 @@ namespace Box.WorldBuilds.VoronoiPort {
         //生成配置
         public Voronoi Voronoi;
 
-        public Dictionary<long,Cell> LandVoronoiCells = new Dictionary<long, Cell>();
-        public Dictionary<long,Cell> WaterVoronoiCells = new Dictionary<long, Cell>();
-        public Dictionary<long,Cell> MountainVoronoiCells = new Dictionary<long, Cell>();
+        public List<Cell> LandVoronoiCells = new List<Cell>();
+        public List<Cell> WaterVoronoiCells = new List<Cell>();
+        public List<Cell> MountainVoronoiCells = new List<Cell>();
+        public List<Cell> LakeVoronoiCells = new List<Cell>();
+        public List<Cell> LavaVoronoiCells = new List<Cell>();
         public Dictionary<long,VoronoiCellBuildData> VoronoiCellDatas = new Dictionary<long, VoronoiCellBuildData>();
 
-        public int 顶点生成数;
+        public int PointGenerateNumber;
 
+        public byte LandHeight = 230;
+        public byte MountainHeight = 230;
 
-        public byte 陆地高度 = 230;
-        public byte 山脉高度 = 230;
+        public int LakeGenerateProbability;
+        public int LakeGenerateTry;
+        public Interval<int> LakeSizeInterval;
 
-        public int 湖泊生成几率;
-        public int 湖泊生成尝试数;
-        public Interval<int> 湖泊大小区间;
+        public int LavaGenerateProbability;
+        public int LavaGenerateTry;
+        public Interval<int> LavaSizeInterval;
 
-        public int 火山湖生成几率;
-        public int 火山湖生成尝试数;
-        public Interval<int> 火山湖大小区间;
-
-        public int 河流生成几率;
-        public int 河流生成尝试数;
-        public Interval<int> 河流大小区间;
+        public int RiverGenerateProbability;
+        public int RiverGenerateTry;
+        public Interval<int> RiverSizeInterval;
     }
 
     public class VoronoiWorldBuilder : WorldBuilder<VoronoiWorldBuilderData> {

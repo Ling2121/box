@@ -37,7 +37,7 @@ namespace Box.WorldBuilds.VoronoiPort {
             int width = data.Width;
             int height = data.Height;
             RandomNumberGenerator random = data.Random;
-            int point_number = data.顶点生成数;// (int)((width + height) * 0.233);
+            int point_number = data.PointGenerateNumber;// (int)((width + height) * 0.233);
 
             Voronoi voronoi = new Voronoi(GenPoints(random,width,height,point_number));
 

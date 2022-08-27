@@ -41,11 +41,11 @@ public class BuildTerrainTestScene : Node2D
     
     int PointNumber {
         get {
-            return BuildData.顶点生成数;
+            return BuildData.PointGenerateNumber;
         }
 
         set {
-            BuildData.顶点生成数 = value;
+            BuildData.PointGenerateNumber = value;
         }
     }
 
@@ -96,21 +96,21 @@ public class BuildTerrainTestScene : Node2D
     
     byte MountainHeight {
         get {
-            return BuildData.山脉高度;
+            return BuildData.MountainHeight;
         }
 
         set {
-            BuildData.山脉高度= value;
+            BuildData.MountainHeight= value;
         }
     }
     
     byte LandHeight {
         get {
-            return BuildData.陆地高度;
+            return BuildData.LandHeight;
         }
 
         set {
-            BuildData.陆地高度= value;
+            BuildData.LandHeight= value;
         }
     }
 
@@ -129,13 +129,14 @@ public class BuildTerrainTestScene : Node2D
         Lacunarity = 1.68f;
         Width = 512;
         Height = 512;
-        PointNumber = 200;
+        PointNumber = 300;
         MountainHeight = 80;
         LandHeight = 10;
-        BuildData.湖泊生成尝试数 = 5;
-        BuildData.湖泊生成几率 = 100;
-        BuildData.火山湖生成尝试数 = 2;
-        BuildData.火山湖生成几率 = 100;
+        BuildData.LakeGenerateTry = 5;
+        BuildData.LakeGenerateProbability = 100;
+        BuildData.LavaGenerateTry = 2;
+        BuildData.LavaGenerateProbability = 100;
+
         Build();
     }
 
