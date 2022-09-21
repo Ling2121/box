@@ -86,13 +86,37 @@ namespace Box.WorldBuilds.VoronoiPort
             return null;
         }
 
-        public void TryBuildLake(VoronoiWorldBuilderData data, int prob, int try_number, Func<Cell, bool> is_func, Action<Cell> build)
+        protected Cell FindCell(List<Cell> cells,Func<Cell,bool> f,Dictionary<long,bool> exclude_table = null) {
+            if(exclude_table != null) {
+                foreach(Cell cell in cells) {
+                    long index = cell.IndexPoint.GetHashValue();
+                    if((!exclude_table.ContainsKey(index)) && f(cell)) return cell;
+                }
+            } else {
+                foreach(Cell cell in cells) {
+                    if(f(cell)) return cell;
+                }
+            }
+
+            return null;
+        }
+
+        protected Edge GetAdjacentEdge(Cell c1,Cell c2) {
+            foreach(Edge c1e in c1.Edges) {
+                if(c1e.C1 == c2 || c1e.C2 == c2) {
+                    return c1e;
+                }
+            }
+            return null;
+        }
+
+        public void TryBuildCell(VoronoiWorldBuilderData data,List<Cell> list,int prob, int try_number, Func<Cell, bool> is_func, Action<Cell> build)
         {
             for (int i = 0; i < try_number; i++)
             {
                 if (data.Random.RandiRange(0, 100) <= prob)
                 {
-                    Cell cell = RandomSelectCell(data, data.LandVoronoiCells, is_func);
+                    Cell cell = RandomSelectCell(data,list, is_func);
                     if (cell != null)
                     {
                         build(cell);
@@ -108,7 +132,7 @@ namespace Box.WorldBuilds.VoronoiPort
             // 1.只会在内陆生成
             // 2.只会在山脉以及附近生成
             // 3.不会在湖泊邻近生成
-            TryBuildLake(data, data.LavaGenerateProbability, data.LavaGenerateTry,
+            TryBuildCell(data,data.LandVoronoiCells,data.LavaGenerateProbability, data.LavaGenerateTry,
                 c =>
                 {
                     bool region_is_lake = false;
@@ -130,6 +154,7 @@ namespace Box.WorldBuilds.VoronoiPort
                 {
                     var cd = data.VoronoiCellDatas[c.IndexPoint.GetHashValue()];
                     cd.IsLava = true;
+                    data.LavaVoronoiCells.Add(c);
                 }
             );
 
@@ -137,7 +162,7 @@ namespace Box.WorldBuilds.VoronoiPort
             //条件
             // 1.只会在内陆生成
             // 2.不会在岩浆湖邻近生成
-            TryBuildLake(data, data.LakeGenerateProbability, data.LakeGenerateTry,
+            TryBuildCell(data,data.LandVoronoiCells,data.LakeGenerateProbability, data.LakeGenerateTry,
                 c =>
                 {
                     bool region_is_lava = false;
@@ -159,13 +184,14 @@ namespace Box.WorldBuilds.VoronoiPort
                 {
                     var cd = data.VoronoiCellDatas[c.IndexPoint.GetHashValue()];
                     cd.IsLake = true;
+                    data.LakeVoronoiCells.Add(c);
                 }
             );
 
 
         }
 
-        public void BuildRiver()
+        public void BuildRiver(VoronoiWorldBuilderData data)
         {
             //河流类型
             //  1.普通
@@ -173,7 +199,42 @@ namespace Box.WorldBuilds.VoronoiPort
             //  2.岩浆
             //      2.1以熔岩湖为起始
 
+            for(int i = 0;i<data.RiverGenerateTry;i++) {
+                var cell = RandomSelectCell(data,data.LakeVoronoiCells,c=> { return true; });
+                TryBuildCell(data,data.LakeVoronoiCells,data.RiverGenerateProbability,data.RiverGenerateTry,
+                    c => {
+                        return true;
+                    },
+                    c => {
+                        List<Edge> river = new List<Edge>();
+                        Cell cc = data.LakeVoronoiCells[data.Random.RandiRange(0,data.LakeVoronoiCells.Count - 1)]; 
+                        var ccd = data.VoronoiCellDatas[cc.IndexPoint.GetHashValue()];
+                        Cell srcc = cc.Regions.Find(rcc => {
+                            var rccd = data.VoronoiCellDatas[rcc.IndexPoint.GetHashValue()];
+                            return rccd.Height <= ccd.Height;
+                        });
+                        if(srcc == null) {
+                            srcc = cc.Regions[data.Random.RandiRange(0,cc.Regions.Count - 1)];
+                        }
+                        Edge e = GetAdjacentEdge(cc,srcc);
+                        Vertex p = e.P1;
+                        float height = data.Noise.IslandNoise(p.Position,data.Width,data.Height);
 
+                        foreach(Edge pre in p.Edges.Values) {
+                            if(pre != e) {
+                                Vertex next_p = pre.P1 != p ? pre.P1 : pre.P2;
+                                if(data.Noise.IslandNoise(next_p.Position,data.Width,data.Height) <= height) {
+                                    p = next_p;
+                                    e = pre;
+                                    break;
+                                }
+                            }
+                        }
+                        river.Add(e);
+
+                    }
+                );
+            }
         }
 
         public void Build(VoronoiWorldBuilderData data)
