@@ -122,7 +122,7 @@ public class BuildTerrainTestScene : Node2D
 
     public override void _Ready()
     {
-        Seed = 23333;
+        Seed = 233;
         Octaves = 3;
         Period = 55;
         Persistence = 0.5f;

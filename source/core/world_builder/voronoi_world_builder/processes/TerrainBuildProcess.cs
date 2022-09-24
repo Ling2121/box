@@ -125,6 +125,11 @@ namespace Box.WorldBuilds.VoronoiPort
             }
         }
 
+        public bool IsCellType(VoronoiWorldBuilderData data,Cell c,VoronoiCellType t) {
+            if(c == null) return false;
+            return data.VoronoiCellDatas[c.IndexPoint.GetHashValue()].Type == t;
+        }
+
         public void BuildLakes(VoronoiWorldBuilderData data)
         {
             //生成火山湖
@@ -207,30 +212,48 @@ namespace Box.WorldBuilds.VoronoiPort
                     },
                     c => {
                         List<Edge> river = new List<Edge>();
-                        Cell cc = data.LakeVoronoiCells[data.Random.RandiRange(0,data.LakeVoronoiCells.Count - 1)]; 
-                        var ccd = data.VoronoiCellDatas[cc.IndexPoint.GetHashValue()];
-                        Cell srcc = cc.Regions.Find(rcc => {
-                            var rccd = data.VoronoiCellDatas[rcc.IndexPoint.GetHashValue()];
-                            return rccd.Height <= ccd.Height;
-                        });
-                        if(srcc == null) {
-                            srcc = cc.Regions[data.Random.RandiRange(0,cc.Regions.Count - 1)];
+                        Cell cc;
+                        if(data.Random.RandiRange(0,100) < 50) {
+                            cc = data.MountainVoronoiCells[data.Random.RandiRange(0,data.MountainVoronoiCells.Count - 1)]; 
+                        } else {
+                            cc = data.LakeVoronoiCells[data.Random.RandiRange(0,data.LakeVoronoiCells.Count - 1)]; 
                         }
-                        Edge e = GetAdjacentEdge(cc,srcc);
-                        Vertex p = e.P1;
-                        float height = data.Noise.IslandNoise(p.Position,data.Width,data.Height);
+                        if(cc == null) {
+                            //从内陆寻找
+                            cc = data.LandVoronoiCells.Find(ccc => {
+                                var cd = data.VoronoiCellDatas[ccc.IndexPoint.GetHashValue()];
+                                return cd.IsInland;
+                            });
+                        }
+                        if(cc == null) return;
 
-                        foreach(Edge pre in p.Edges.Values) {
-                            if(pre != e) {
-                                Vertex next_p = pre.P1 != p ? pre.P1 : pre.P2;
-                                if(data.Noise.IslandNoise(next_p.Position,data.Width,data.Height) <= height) {
-                                    p = next_p;
-                                    e = pre;
-                                    break;
+                        Dictionary<long,bool> cell_hash = new Dictionary<long, bool>();
+
+                        while(cc != null) {
+                            var ccd = data.VoronoiCellDatas[cc.IndexPoint.GetHashValue()];
+                            Cell next_c = null;
+                            foreach(Cell rc in cc.Regions) {
+                                var rcd = data.VoronoiCellDatas[rc.IndexPoint.GetHashValue()];
+                                if(rcd.Height <= ccd.Height) {
+                                    next_c = rc;
                                 }
                             }
+                            if(next_c == null) {
+                                next_c = cc.Regions[data.Random.RandiRange(0,cc.Regions.Count)];
+                            }
+
+                            Edge ae = GetAdjacentEdge(cc,next_c);
+                            Edge edge = new Edge();
+                            edge.P1 = cc.IndexPoint;
+                            edge.P2 = next_c.IndexPoint;
+                            
+                            edge.C1 = new Cell();
+                            edge.C1.IndexPoint = ae.P1;
+
+                            edge.C2 = new Cell();
+                            edge.C2.IndexPoint = ae.P2;
+                            river.Add(edge);
                         }
-                        river.Add(e);
 
                     }
                 );
@@ -241,7 +264,7 @@ namespace Box.WorldBuilds.VoronoiPort
         {
             BuildWaterAndLand(data);
             BuildLakes(data);
-
+            BuildRiver(data);
 #if DEBUG
 
             DataCanvas canvas = null;
@@ -288,6 +311,11 @@ namespace Box.WorldBuilds.VoronoiPort
                 canvas.DrawCircle(0xffffffff, cell.IndexPoint.Position, 2, true);
             }
 
+            foreach(var river in data.RiverVoronoiEdges) {
+                foreach(Edge edge in river) {
+                    canvas.DrawLine(0xff0ca2e4,edge.P1.Position,edge.P2.Position,5);
+                }
+            }
 #endif
         }
     }

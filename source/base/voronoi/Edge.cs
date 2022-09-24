@@ -3,21 +3,6 @@ using System.Collections.Generic;
 
 namespace Box.VoronoiMap {
     public class Edge {
-
-        public static bool operator==(Edge a,Edge b) {
-            return a.IndexPoint.GetHashValue() == b.IndexPoint.GetHashValue();
-        }
-
-        public static bool operator!=(Edge a,Edge b) {
-            return a.IndexPoint.GetHashValue() != b.IndexPoint.GetHashValue();
-        }
-
-        public override bool Equals(object obj)
-        {
-            if(!(obj is Edge)) return false;
-            return (obj as Edge).IndexPoint.GetHashValue() == IndexPoint.GetHashValue();
-        }
-
         public Vertex IndexPoint;
         public Vertex P1;
         public Vertex P2;

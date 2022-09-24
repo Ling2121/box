@@ -21,8 +21,6 @@ namespace Box.WorldBuilds.VoronoiPort {
         public bool IsFoot = false;//是否在山脚下
         public bool IsLake = false;//是否是湖泊
         public bool IsLava = false;//是否是熔岩湖
-        public bool IsRiverStart = false;//河流起始
-        public bool IsRiverEnd = false;//河流终点
     }
 
     public class VoronoiWorldBuilderData : IBuildData {
@@ -75,8 +73,8 @@ namespace Box.WorldBuilds.VoronoiPort {
         public int LavaGenerateTry;
         public Interval<int> LavaSizeInterval;
 
-        public int RiverGenerateProbability;
-        public int RiverGenerateTry;
+        public int RiverGenerateProbability = 100;
+        public int RiverGenerateTry = 2;
         public Interval<int> RiverSizeInterval;
     }
 

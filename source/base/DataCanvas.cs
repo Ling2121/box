@@ -48,8 +48,9 @@ namespace Box {
 
         }
 
-        public void DrawLine(uint data,Vector2 p0,Vector2 p1) {
+        public void DrawLine(uint data,Vector2 p0,Vector2 p1,int w = 1) {
             LinePaint.Color = data;
+            LinePaint.StrokeWidth = w;
             Canvas.DrawLine(ToSKPoint(p0),ToSKPoint(p1),LinePaint);
         }
 
